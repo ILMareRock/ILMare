@@ -22,5 +22,6 @@ android {
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     compile 'com.android.support:appcompat-v7:21.1.2'
+    compile 'com.jpardogo.materialtabstrip:library:1.1.0'
     compile 'com.google.android.gms:play-services:7.8.0'
 }

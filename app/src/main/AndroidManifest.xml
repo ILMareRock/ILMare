@@ -26,7 +26,7 @@ The ACCESS_COARSE/FINE_LOCATION permissions are not required to use
         android:value="@string/google_maps_key" />
 
     <activity
-        android:name=".MainScreenActivity"
+        android:name=".activities.MainScreenActivity"
         android:label="@string/title_activity_main_screen">
       <intent-filter>
         <action android:name="android.intent.action.MAIN" />
