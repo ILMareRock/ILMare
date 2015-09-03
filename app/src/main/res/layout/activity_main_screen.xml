@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <RelativeLayout
     android:layout_height="match_parent"
     android:layout_width="match_parent"
@@ -16,3 +17,39 @@
         android:name="com.google.android.gms.maps.SupportMapFragment"
         android:layout_below="@+id/text" />
 </RelativeLayout>
+=======
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/sample_main_layout">
+
+  <android.support.v7.widget.Toolbar
+      android:id="@+id/main_screen_toolbar"
+      android:layout_height="wrap_content"
+      android:layout_width="match_parent"
+      android:minHeight="?attr/actionBarSize"
+      android:elevation="4dp"
+      android:background="@color/primary">
+  </android.support.v7.widget.Toolbar>
+
+  <com.astuetz.PagerSlidingTabStrip
+      android:id="@+id/tabs"
+      android:layout_width="match_parent"
+      android:layout_height="?attr/actionBarSize"
+      android:background="@color/primary"
+      android:elevation="4dp"
+      app:pstsShouldExpand="true"
+      app:pstsIndicatorColor="@color/accentFallback"/>
+
+  <android.support.v4.view.ViewPager
+      android:id="@+id/viewpager"
+      android:layout_width="match_parent"
+      android:layout_height="0px"
+      android:layout_weight="1"
+      android:background="@android:color/white"/>
+</LinearLayout>
+>>>>>>> 5b81707c99ec16ae73fbe5ee8cb98bd7780e7aee
