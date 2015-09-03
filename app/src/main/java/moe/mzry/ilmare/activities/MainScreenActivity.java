@@ -1,31 +1,28 @@
 package moe.mzry.ilmare.activities;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentStatePagerAdapter;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.widget.TextView;
+import android.util.Log;
+import android.view.View;
 
 import com.astuetz.PagerSlidingTabStrip;
-import com.google.android.gms.maps.CameraUpdateFactory;
-import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.MarkerOptions;
 
 import moe.mzry.ilmare.R;
+import moe.mzry.ilmare.fragments.MapController;
 
-public class MainScreenActivity extends AppCompatActivity implements OnMapReadyCallback {
+public class MainScreenActivity extends AppCompatActivity {
+
+  private SupportMapFragment supportMapFragment;
+  private static final int CREATE_MESSAGE_REQUEST = 1;
 
   @Override
-  protected void onCreate(Bundle savedInstanceState) {
+  protected void onCreate(final Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_main_screen);
 
@@ -36,24 +33,21 @@ public class MainScreenActivity extends AppCompatActivity implements OnMapReadyC
     // Initialize the ViewPager and set an adapter
     ViewPager pager = (ViewPager) findViewById(R.id.viewpager);
     pager.setAdapter(new FragmentStatePagerAdapter(getSupportFragmentManager()) {
-
       @Override
       public Fragment getItem(int position) {
-        switch (position % 3) {
-          //case 0:
-          //    return RecyclerViewFragment.newInstance();
-          //case 1:
-          //    return RecyclerViewFragment.newInstance();
-          //case 2:
-          //    return WebViewFragment.newInstance();
+        switch (position) {
+          case 0:
+            return setUpMapIfNeeded();
           default:
+            Log.i("PagerAdapter", "How many times;;;");
             return SupportMapFragment.newInstance();
         }
       }
 
       @Override
       public int getCount() {
-        return 3;
+        Log.i("Main", "getCount!");
+        return 2;
       }
 
       @Override
@@ -62,8 +56,6 @@ public class MainScreenActivity extends AppCompatActivity implements OnMapReadyC
           case 0:
             return "MAP";
           case 1:
-            return "LIST";
-          case 2:
             return "DEBUG";
         }
         return "";
@@ -73,32 +65,39 @@ public class MainScreenActivity extends AppCompatActivity implements OnMapReadyC
     // Bind the tabs to the ViewPager
     PagerSlidingTabStrip tabs = (PagerSlidingTabStrip) findViewById(R.id.tabs);
     tabs.setViewPager(pager);
+
+    findViewById(R.id.newMessageButton).setOnClickListener(new View.OnClickListener() {
+      @Override
+      public void onClick(View v) {
+        Intent intent = new Intent();
+        intent.setClass(MainScreenActivity.this, NewMessageActivity.class);
+        startActivityForResult(intent, CREATE_MESSAGE_REQUEST, null);
+        MainScreenActivity.this.finish();
+      }
+    });
+  }
+
+  @Override
+  protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+    super.onActivityResult(requestCode, resultCode, data);
+    if (requestCode == CREATE_MESSAGE_REQUEST) {
+      // TODO: check three cases SUCCESS, FAIL, CANCEL
+      Log.i("Main", "onActiveResult");
+    }
   }
 
   @Override
   protected void onResume() {
     super.onResume();
+    Log.i("Main", "onResume");
     setUpMapIfNeeded();
   }
 
-  private void setUpMapIfNeeded() {
-    // Try to obtain the map from the SupportMapFragment.
-    SupportMapFragment supportMapFragment = ((SupportMapFragment)
-            getSupportFragmentManager().findFragmentById(R.id.map));
-    if (supportMapFragment != null) {
-      supportMapFragment.getMapAsync(this);
+  private SupportMapFragment setUpMapIfNeeded() {
+    if (supportMapFragment == null) {
+      supportMapFragment = SupportMapFragment.newInstance();
+      MapController.bindController(supportMapFragment);
     }
-  }
-
-  @Override
-  public void onMapReady(GoogleMap map) {
-    // Add a marker in Sydney, Australia, and move the camera.
-    LatLng sydney = new LatLng(-34, 151);
-    map.setMyLocationEnabled(true);
-    map.moveCamera(CameraUpdateFactory.newLatLngZoom(sydney, 13));
-    map.addMarker(new MarkerOptions()
-            .title("Sydney")
-            .snippet("The most populous city in Australia.")
-            .position(sydney));
+    return supportMapFragment;
   }
 }
