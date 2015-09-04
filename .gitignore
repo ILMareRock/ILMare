@@ -1,7 +1,11 @@
 /*.iml
-.gradle
+/.gradle/**
 /app/app.iml
 /local.properties
+/.idea/libraries
 /.idea/**
 .DS_Store
 /build
+/app/src/debug/**
+/app/src/release/**
+

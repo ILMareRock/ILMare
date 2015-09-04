@@ -13,12 +13,12 @@ import moe.mzry.ilmare.R;
  */
 public class NewMessageFragment extends Fragment {
 
-  public NewMessageFragment() {
-  }
+    public NewMessageFragment() {
+    }
 
-  @Override
-  public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                           Bundle savedInstanceState) {
-    return inflater.inflate(R.layout.fragment_new_message, container, false);
-  }
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        return inflater.inflate(R.layout.fragment_new_message, container, false);
+    }
 }
