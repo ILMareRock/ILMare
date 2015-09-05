@@ -14,6 +14,8 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ListView;
+import android.widget.SimpleAdapter;
 
 import com.astuetz.PagerSlidingTabStrip;
 import com.getbase.floatingactionbutton.AddFloatingActionButton;
@@ -21,9 +23,12 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.common.collect.Lists;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import moe.mzry.ilmare.R;
+import moe.mzry.ilmare.fragments.MessageListFragment;
 import moe.mzry.ilmare.service.IlMareService;
 
 /**
@@ -32,6 +37,7 @@ import moe.mzry.ilmare.service.IlMareService;
 public class MainScreenActivity extends AppCompatActivity {
 
     private SupportMapFragment supportMapFragment;
+    private MessageListFragment messageListFragment;
     private static final int CREATE_MESSAGE_REQUEST = 1;
 
     private boolean locationServiceRunning = false;
@@ -57,6 +63,8 @@ public class MainScreenActivity extends AppCompatActivity {
                 switch (position) {
                     case 0:
                         return setUpMapIfNeeded();
+                    case 1:
+                        return setUpMessageList();
                     default:
                         Log.i("PagerAdapter", "How many times;;;");
                         return SupportMapFragment.newInstance();
@@ -66,7 +74,7 @@ public class MainScreenActivity extends AppCompatActivity {
             @Override
             public int getCount() {
                 Log.i("Main", "getCount!");
-                return 2;
+                return 3;
             }
 
             @Override
@@ -75,6 +83,8 @@ public class MainScreenActivity extends AppCompatActivity {
                     case 0:
                         return "MAP";
                     case 1:
+                        return "LIST";
+                    case 2:
                         return "DEBUG";
                 }
                 return "";
@@ -157,6 +167,13 @@ public class MainScreenActivity extends AppCompatActivity {
             MapController.bindController(supportMapFragment);
         }
         return supportMapFragment;
+    }
+
+    private MessageListFragment setUpMessageList() {
+        if (messageListFragment == null) {
+            messageListFragment = MessageListFragment.newInstance();
+        }
+        return messageListFragment;
     }
 
     public ServiceConnection locationServiceConnection = new ServiceConnection() {
