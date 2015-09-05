@@ -26,7 +26,7 @@ public class MessageListFragment extends Fragment {
     // TODO: set the data provider and fill content when needed.
     private IlMareDataProvider dataProvider;
 
-    public static MessageListFragment newInstance(IlMareDataProvider provider) {
+    public static MessageListFragment newInstance() {
         MessageListFragment fragment = new MessageListFragment();
         return fragment;
     }
