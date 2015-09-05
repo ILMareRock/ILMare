@@ -12,11 +12,13 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.astuetz.PagerSlidingTabStrip;
 import com.getbase.floatingactionbutton.AddFloatingActionButton;
@@ -127,6 +129,18 @@ public class MainScreenActivity extends AppCompatActivity {
         newMessageTextBox.setVisibility(View.VISIBLE);
         newMessageTextBox.requestFocus();
         inputManager.showSoftInput(newMessageTextBox, InputMethodManager.SHOW_FORCED);
+        newMessageTextBox.setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                // If the event is a key-down event on the "enter" button
+                if ((event.getAction() == KeyEvent.ACTION_DOWN) &&
+                        (keyCode == KeyEvent.KEYCODE_ENTER)) {
+                    sendMessage(newMessageTextBox.getText().toString());
+                    return true;
+                }
+                return false;
+            }
+        });
         toolbar.setTitle(R.string.title_new_message);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
@@ -134,11 +148,18 @@ public class MainScreenActivity extends AppCompatActivity {
     private void backToMainScreen() {
         newMessageButton.setVisibility(View.VISIBLE);
         newMessageTextBox.setVisibility(View.INVISIBLE);
+        newMessageTextBox.setText("");
         newMessageTextBox.clearFocus();
         // Force hide keyboard
         inputManager.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
         toolbar.setTitle(R.string.title_activity_main_screen);
         getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+    }
+
+    private void sendMessage(String message) {
+        Log.i("NewMessage", message);
+        // todo
+        backToMainScreen();
     }
 
     @Override
