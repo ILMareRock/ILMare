@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <!-- TODO:replace this layout to make the button right place. -->
-<LinearLayout
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:fab="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -15,7 +16,8 @@
         android:layout_width="match_parent"
         android:minHeight="?attr/actionBarSize"
         android:elevation="4dp"
-        android:background="@color/primary">
+        android:background="@color/primary"
+        android:layout_alignParentTop="true">
     </android.support.v7.widget.Toolbar>
 
     <com.astuetz.PagerSlidingTabStrip
@@ -24,6 +26,7 @@
         android:layout_height="?attr/actionBarSize"
         android:background="@color/primary"
         android:elevation="4dp"
+        android:layout_below="@id/main_screen_toolbar"
         app:pstsShouldExpand="true"
         app:pstsIndicatorColor="@color/accentFallback"/>
 
@@ -32,14 +35,19 @@
         android:layout_width="match_parent"
         android:layout_height="0px"
         android:layout_weight="1"
-        android:background="@android:color/white"/>
+        android:background="@android:color/white"
+        android:layout_below="@id/tabs"
+        android:layout_alignParentBottom="true"/>
 
-    <!-- TODO:replace the icon with a cross according to the mock. -->
-    <at.markushi.ui.CircleButton
-        android:id="@+id/newMessageButton"
-        android:layout_width="64dip"
-        android:layout_height="64dip"
-        android:src="@drawable/ic_launcher"
-        app:cb_color="@color/primary"
-        app:cb_pressedRingWidth="8dip" />
-</LinearLayout>
+    <com.getbase.floatingactionbutton.AddFloatingActionButton
+            android:id="@+id/newMessageButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="16dp"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="16dp"
+            fab:fab_plusIconColor="@color/white"
+            fab:fab_colorNormal="@color/primary"
+            fab:fab_colorPressed="@color/primary_dark"/>
+</RelativeLayout>

@@ -12,9 +12,11 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 
 import com.astuetz.PagerSlidingTabStrip;
+import com.getbase.floatingactionbutton.AddFloatingActionButton;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.common.collect.Lists;
@@ -35,13 +37,16 @@ public class MainScreenActivity extends AppCompatActivity {
     private boolean locationServiceRunning = false;
     private IlMareService ilMareService;
 
+    private Toolbar toolbar;
+    private AddFloatingActionButton newMessageButton;
+
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_screen);
 
         // Initialize the views.
-        Toolbar toolbar = (Toolbar) findViewById(R.id.main_screen_toolbar);
+        toolbar = (Toolbar) findViewById(R.id.main_screen_toolbar);
         setSupportActionBar(toolbar);
 
         // Initialize the ViewPager and set an adapter
@@ -80,10 +85,15 @@ public class MainScreenActivity extends AppCompatActivity {
         PagerSlidingTabStrip tabs = (PagerSlidingTabStrip) findViewById(R.id.tabs);
         tabs.setViewPager(pager);
 
-        findViewById(R.id.newMessageButton).setOnClickListener(new View.OnClickListener() {
+        newMessageButton = (AddFloatingActionButton) findViewById(R.id.newMessageButton);
+        newMessageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent();
+                newMessageButton.setVisibility(View.INVISIBLE);
+                toolbar.setTitle("New message");
+                getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+                /*Intent intent = new Intent();
                 intent.setClass(MainScreenActivity.this, NewMessageActivity.class);
                 Bundle bundle = new Bundle();
 
@@ -96,12 +106,25 @@ public class MainScreenActivity extends AppCompatActivity {
                 bundle.putStringArrayList("beacons", Lists.newArrayList(strings));
 
                 startActivityForResult(intent, CREATE_MESSAGE_REQUEST, bundle);
-                MainScreenActivity.this.finish();
+                MainScreenActivity.this.finish();*/
             }
         });
 
         bindService(new Intent(this, IlMareService.class), locationServiceConnection,
                 Context.BIND_AUTO_CREATE);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                newMessageButton.setVisibility(View.VISIBLE);
+                toolbar.setTitle("ILMare");
+                getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
     @Override
