@@ -4,7 +4,7 @@ import com.google.android.gms.maps.model.LatLng;
 
 import java.util.List;
 
-import moe.mzry.ilmare.service.data.BeaconSpecification;
+import moe.mzry.ilmare.service.data.LocationSpec;
 import moe.mzry.ilmare.service.data.Message;
 
 /**
@@ -12,11 +12,7 @@ import moe.mzry.ilmare.service.data.Message;
  */
 public interface IlMareDataProvider {
 
-    List<Message> getMessageByBeacon(BeaconSpecification beaconSpecification);
+    List<Message> getMessageByBeacon(LocationSpec locationSpec);
 
-    List<Message> getMessageByLocation(LatLng latLng, Long level);
-
-    void createMessage(Message message, BeaconSpecification beaconSpecification);
-
-    void createMessage(Message message, LatLng latLng, Long level);
+    void createMessage(Message message, LocationSpec locationSpec);
 }

@@ -12,10 +12,15 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
+import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.EditText;
+import android.widget.Toast;ß
 
 import com.astuetz.PagerSlidingTabStrip;
 import com.getbase.floatingactionbutton.AddFloatingActionButton;
@@ -45,14 +50,23 @@ public class MainScreenActivity extends AppCompatActivity {
 
     private Toolbar toolbar;
     private AddFloatingActionButton newMessageButton;
+    private EditText newMessageTextBox;
+    private InputMethodManager inputManager;
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_screen);
 
+        inputManager =
+                (InputMethodManager) this.getSystemService(Context.INPUT_METHOD_SERVICE);
+
         // Initialize the views.
         toolbar = (Toolbar) findViewById(R.id.main_screen_toolbar);
+        newMessageButton = (AddFloatingActionButton) findViewById(R.id.newMessageButton);
+        newMessageTextBox = (EditText) findViewById(R.id.newMessageTextBox);
+
+        newMessageTextBox.setVisibility(View.INVISIBLE);
         setSupportActionBar(toolbar);
 
         // Initialize the ViewPager and set an adapter
@@ -95,25 +109,19 @@ public class MainScreenActivity extends AppCompatActivity {
         PagerSlidingTabStrip tabs = (PagerSlidingTabStrip) findViewById(R.id.tabs);
         tabs.setViewPager(pager);
 
-        newMessageButton = (AddFloatingActionButton) findViewById(R.id.newMessageButton);
         newMessageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                newMessageButton.setVisibility(View.INVISIBLE);
-                toolbar.setTitle("New message");
-                getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
+                popupNewMessageTextBox();
                 /*Intent intent = new Intent();
                 intent.setClass(MainScreenActivity.this, NewMessageActivity.class);
                 Bundle bundle = new Bundle();
 
                 LatLng location = ilMareService.getLocation();
                 Long level = ilMareService.getLevel();
-                List<String> strings = ilMareService.getNearbyBeacons();
                 bundle.putDouble("lat", location.latitude);
                 bundle.putDouble("lon", location.longitude);
                 bundle.putLong("level", level);
-                bundle.putStringArrayList("beacons", Lists.newArrayList(strings));
 
                 startActivityForResult(intent, CREATE_MESSAGE_REQUEST, bundle);
                 MainScreenActivity.this.finish();*/
@@ -124,13 +132,49 @@ public class MainScreenActivity extends AppCompatActivity {
                 Context.BIND_AUTO_CREATE);
     }
 
+    private void popupNewMessageTextBox() {
+        newMessageButton.setVisibility(View.INVISIBLE);
+        newMessageTextBox.setVisibility(View.VISIBLE);
+        newMessageTextBox.requestFocus();
+        inputManager.showSoftInput(newMessageTextBox, InputMethodManager.SHOW_FORCED);
+        newMessageTextBox.setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                // If the event is a key-down event on the "enter" button
+                if ((event.getAction() == KeyEvent.ACTION_DOWN) &&
+                        (keyCode == KeyEvent.KEYCODE_ENTER)) {
+                    sendMessage(newMessageTextBox.getText().toString());
+                    return true;
+                }
+                return false;
+            }
+        });
+        toolbar.setTitle(R.string.title_new_message);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+    }
+
+    private void backToMainScreen() {
+        newMessageButton.setVisibility(View.VISIBLE);
+        newMessageTextBox.setVisibility(View.INVISIBLE);
+        newMessageTextBox.setText("");
+        newMessageTextBox.clearFocus();
+        // Force hide keyboard
+        inputManager.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
+        toolbar.setTitle(R.string.title_activity_main_screen);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+    }
+
+    private void sendMessage(String message) {
+        Log.i("NewMessage", message);
+        // todo
+        backToMainScreen();
+    }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
-                newMessageButton.setVisibility(View.VISIBLE);
-                toolbar.setTitle("ILMare");
-                getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+                backToMainScreen();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-  <string name="app_name">IL Mare</string>
-  <string name="title_activity_main_screen">IL Mare</string>
-  <string name="title_activity_maps">Map</string>
+    <string name="app_name">IL Mare</string>
+    <string name="title_activity_main_screen">IL Mare</string>
+    <string name="title_new_message">New message</string>
+    <string name="title_activity_maps">Map</string>
     <string name="title_activity_new_message">NewMessageActivity</string>
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>

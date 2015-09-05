@@ -47,7 +47,17 @@
             android:layout_marginBottom="16dp"
             android:layout_alignParentRight="true"
             android:layout_marginRight="16dp"
-            fab:fab_plusIconColor="@color/white"
+            android:background="@android:color/white"
             fab:fab_colorNormal="@color/primary"
             fab:fab_colorPressed="@color/primary_dark"/>
+
+    <EditText
+            android:layout_width="match_parent"
+            android:layout_height="112dp"
+            android:gravity="top"
+            android:padding="16dp"
+            android:id="@+id/newMessageTextBox"
+            android:layout_alignParentBottom="true"
+            android:background="@android:color/white"
+            android:textColor="@color/primary_text"/>
 </RelativeLayout>
