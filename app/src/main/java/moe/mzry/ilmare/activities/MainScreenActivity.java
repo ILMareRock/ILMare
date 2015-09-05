@@ -89,11 +89,9 @@ public class MainScreenActivity extends AppCompatActivity {
 
                 LatLng location = ilMareService.getLocation();
                 Long level = ilMareService.getLevel();
-                List<String> strings = ilMareService.getNearbyBeacons();
                 bundle.putDouble("lat", location.latitude);
                 bundle.putDouble("lon", location.longitude);
                 bundle.putLong("level", level);
-                bundle.putStringArrayList("beacons", Lists.newArrayList(strings));
 
                 startActivityForResult(intent, CREATE_MESSAGE_REQUEST, bundle);
                 MainScreenActivity.this.finish();
