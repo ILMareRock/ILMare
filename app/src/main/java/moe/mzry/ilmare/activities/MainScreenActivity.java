@@ -20,7 +20,7 @@ import android.widget.SimpleAdapter;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
-import android.widget.Toast;ß
+import android.widget.Toast;
 
 import com.astuetz.PagerSlidingTabStrip;
 import com.getbase.floatingactionbutton.AddFloatingActionButton;
