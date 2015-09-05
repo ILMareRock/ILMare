@@ -29,7 +29,8 @@ The ACCESS_COARSE/FINE_LOCATION permissions are not required to use
 
         <activity
             android:name=".activities.MainScreenActivity"
-            android:label="@string/title_activity_main_screen" >
+            android:label="@string/title_activity_main_screen"
+            android:windowSoftInputMode="stateAlwaysHidden|adjustResize">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
