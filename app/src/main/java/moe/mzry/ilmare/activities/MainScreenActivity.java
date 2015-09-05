@@ -15,31 +15,22 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ListView;
-import android.widget.SimpleAdapter;
-import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
-import android.widget.Toast;
 
 import com.astuetz.PagerSlidingTabStrip;
 import com.getbase.floatingactionbutton.AddFloatingActionButton;
 import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.common.collect.Lists;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 
 import moe.mzry.ilmare.R;
 import moe.mzry.ilmare.fragments.MessageListFragment;
 import moe.mzry.ilmare.service.IlMareService;
+import moe.mzry.ilmare.views.PopupTextBox;
 
 /**
  * Main activity.
  */
-public class MainScreenActivity extends AppCompatActivity {
+public class MainScreenActivity extends AppCompatActivity implements PopupTextBox.EventHandler {
 
     private SupportMapFragment supportMapFragment;
     private MessageListFragment messageListFragment;
@@ -50,7 +41,7 @@ public class MainScreenActivity extends AppCompatActivity {
 
     private Toolbar toolbar;
     private AddFloatingActionButton newMessageButton;
-    private EditText newMessageTextBox;
+    private PopupTextBox newMessageTextBox;
     private InputMethodManager inputManager;
 
     @Override
@@ -64,8 +55,9 @@ public class MainScreenActivity extends AppCompatActivity {
         // Initialize the views.
         toolbar = (Toolbar) findViewById(R.id.main_screen_toolbar);
         newMessageButton = (AddFloatingActionButton) findViewById(R.id.newMessageButton);
-        newMessageTextBox = (EditText) findViewById(R.id.newMessageTextBox);
+        newMessageTextBox = (PopupTextBox) findViewById(R.id.newMessageTextBox);
 
+        newMessageTextBox.setEventHandler(this);
         newMessageTextBox.setVisibility(View.INVISIBLE);
         setSupportActionBar(toolbar);
 
@@ -136,19 +128,7 @@ public class MainScreenActivity extends AppCompatActivity {
         newMessageButton.setVisibility(View.INVISIBLE);
         newMessageTextBox.setVisibility(View.VISIBLE);
         newMessageTextBox.requestFocus();
-        inputManager.showSoftInput(newMessageTextBox, InputMethodManager.SHOW_FORCED);
-        newMessageTextBox.setOnKeyListener(new View.OnKeyListener() {
-            @Override
-            public boolean onKey(View v, int keyCode, KeyEvent event) {
-                // If the event is a key-down event on the "enter" button
-                if ((event.getAction() == KeyEvent.ACTION_DOWN) &&
-                        (keyCode == KeyEvent.KEYCODE_ENTER)) {
-                    sendMessage(newMessageTextBox.getText().toString());
-                    return true;
-                }
-                return false;
-            }
-        });
+        inputManager.showSoftInput(newMessageTextBox, 0);
         toolbar.setTitle(R.string.title_new_message);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
@@ -156,12 +136,22 @@ public class MainScreenActivity extends AppCompatActivity {
     private void backToMainScreen() {
         newMessageButton.setVisibility(View.VISIBLE);
         newMessageTextBox.setVisibility(View.INVISIBLE);
-        newMessageTextBox.setText("");
         newMessageTextBox.clearFocus();
         // Force hide keyboard
-        inputManager.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
+        inputManager.toggleSoftInput(0, 0);
         toolbar.setTitle(R.string.title_activity_main_screen);
+        newMessageTextBox.setText("");
         getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+    }
+
+    @Override
+    public void onPopupTextBoxEnterPressed() {
+        sendMessage(newMessageTextBox.getText().toString());
+    }
+
+    @Override
+    public void onPopupTextBoxBackPressed() {
+        backToMainScreen();
     }
 
     private void sendMessage(String message) {
