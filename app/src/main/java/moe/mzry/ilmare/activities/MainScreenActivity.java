@@ -205,7 +205,7 @@ public class MainScreenActivity extends AppCompatActivity implements PopupTextBo
 
     private MessageListFragment setUpMessageList() {
         if (messageListFragment == null) {
-            messageListFragment = MessageListFragment.newInstance();
+            messageListFragment = MessageListFragment.newInstance(ilMareService);
         }
         return messageListFragment;
     }
