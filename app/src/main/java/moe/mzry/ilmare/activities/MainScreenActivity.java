@@ -195,6 +195,11 @@ public class MainScreenActivity extends AppCompatActivity implements PopupTextBo
         }
     }
 
+    public void onVirtualView(View view) {
+        Intent intent = new Intent(this, VrActivity.class);
+        startActivity(intent);
+    }
+
     private SupportMapFragment setUpMapIfNeeded() {
         if (supportMapFragment == null) {
             supportMapFragment = SupportMapFragment.newInstance();

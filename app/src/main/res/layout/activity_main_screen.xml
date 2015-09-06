@@ -40,26 +40,41 @@
         android:layout_alignParentBottom="true"/>
 
     <com.getbase.floatingactionbutton.AddFloatingActionButton
-            android:id="@+id/newMessageButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_marginBottom="16dp"
-            android:layout_alignParentRight="true"
-            android:layout_marginRight="16dp"
-            android:elevation="4dp"
-            android:background="@android:color/white"
-            fab:fab_colorNormal="@color/primary"
-            fab:fab_colorPressed="@color/primary_dark"/>
+        android:id="@+id/newMessageButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="16dp"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="16dp"
+        android:elevation="4dp"
+        android:background="@android:color/white"
+        fab:fab_colorNormal="@color/primary"
+        fab:fab_colorPressed="@color/primary_dark"/>
+
+    <com.getbase.floatingactionbutton.FloatingActionButton
+        android:id="@+id/virtualViewButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginRight="16dp"
+        android:elevation="4dp"
+        android:background="@android:color/white"
+        fab:fab_icon="@drawable/ic_photo_camera_white_48dp"
+        fab:fab_colorNormal="@color/primary"
+        fab:fab_colorPressed="@color/primary_dark"
+        android:layout_alignTop="@+id/newMessageButton"
+        android:layout_toStartOf="@+id/newMessageButton"
+        android:onClick="onVirtualView" />
 
     <moe.mzry.ilmare.views.PopupTextBox
-            android:layout_width="match_parent"
-            android:layout_height="112dp"
-            android:gravity="top"
-            android:padding="16dp"
-            android:id="@+id/newMessageTextBox"
-            android:elevation="4dp"
-            android:layout_alignParentBottom="true"
-            android:background="@android:color/white"
-            android:textColor="@color/primary_text"/>
+        android:layout_width="match_parent"
+        android:layout_height="112dp"
+        android:gravity="top"
+        android:padding="16dp"
+        android:id="@+id/newMessageTextBox"
+        android:elevation="4dp"
+        android:layout_alignParentBottom="true"
+        android:background="@android:color/white"
+        android:textColor="@color/primary_text"/>
+
 </RelativeLayout>
