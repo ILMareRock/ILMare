@@ -51,6 +51,7 @@ The ACCESS_COARSE/FINE_LOCATION permissions are not required to use
         <activity
             android:name=".activities.VrActivity"
             android:label="@string/title_activity_vr"
+            android:screenOrientation="portrait"
             android:parentActivityName=".activities.MainScreenActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
