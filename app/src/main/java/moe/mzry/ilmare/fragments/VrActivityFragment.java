@@ -48,16 +48,14 @@ public class VrActivityFragment extends Fragment implements SensorEventListener 
     private AutoFitTextureView mTextureView;
     private CaptureRequest.Builder mPreviewRequestBuilder;
     private CaptureRequest mPreviewRequest;
-    public Size mPreviewSize;
+    private Size mPreviewSize;
     private CameraCaptureSession mCaptureSession;
     private GLSurfaceView mOverlayView;
     private SensorManager mSensorManager;
     private Sensor rotationSensor;
-    public SizeF mSensorSize;
-    public int mViewWidth;
-    public int mViewHeight;
-    public float mFocalLength = 5f;
-    public float[] mRotationMat = {
+    private SizeF mSensorSize;
+    private float mFocalLength = 5f;
+    private float[] mRotationMat = {
             1, 0, 0, 0,
             0, 1, 0, 0,
             0, 0, 1, 0,
@@ -65,10 +63,6 @@ public class VrActivityFragment extends Fragment implements SensorEventListener 
     };
 
     public GLRenderer renderer = new GLRenderer();
-
-    private double mAzimuth;
-    private double mPitch;
-    private double mRoll;
 
     public VrActivityFragment() {
     }
@@ -241,10 +235,6 @@ public class VrActivityFragment extends Fragment implements SensorEventListener 
             SensorManager.getOrientation(remapMatrix, orientation);
             SensorManager.getRotationMatrixFromVector(mRotationMat, vec);
             renderer.setRotationMat(mRotationMat);
-
-            mAzimuth = orientation[0];
-            mPitch = Math.PI / 2 - orientation[1];
-            mRoll = orientation[2];
         }
     }
 
