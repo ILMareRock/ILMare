@@ -59,11 +59,12 @@ public class Billboard implements Comparable<Billboard> {
   private int textHeight;
   private static int corner = 50;
 
-  public Billboard(int program, float x, float y) {
+  public Billboard(int program, String message, float x, float y) {
     this.mProgram = program;
     mX = x;
     mY = y;
     initShape();
+    setText(message);
   }
 
   void initShape() {
@@ -132,7 +133,7 @@ public class Billboard implements Comparable<Billboard> {
     vertexBuffer.position(0);
   }
 
-  public void setText(String text) {
+  private void setText(String text) {
     TextPaint mTextPaint=new TextPaint();
     mTextPaint.setAntiAlias(true);
     mTextPaint.setTextSize(96);

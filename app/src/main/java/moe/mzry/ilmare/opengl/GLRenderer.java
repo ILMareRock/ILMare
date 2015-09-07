@@ -85,12 +85,11 @@ public class GLRenderer implements GLSurfaceView.Renderer {
     for (int i = 0; i < 20; i++) {
       float x = (float) Math.random() * 20000 - 10000;
       float y = (float) Math.random() * 20000 - 10000;
-      mBillboard[i] = new Billboard(program,
-          x, y);
       String txt = String.format("Id = (%d).", i);
       txt += " " + messages[i];
 
-      mBillboard[i].setText(txt);
+      mBillboard[i] = new Billboard(program, txt,
+          x, y);
     }
   }
 
