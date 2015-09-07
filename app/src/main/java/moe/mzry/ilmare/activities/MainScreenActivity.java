@@ -119,9 +119,6 @@ public class MainScreenActivity extends AppCompatActivity implements PopupTextBo
                 MainScreenActivity.this.finish();*/
             }
         });
-
-        bindService(new Intent(this, IlMareService.class), locationServiceConnection,
-                Context.BIND_AUTO_CREATE);
     }
 
     private void popupNewMessageTextBox() {
@@ -184,6 +181,8 @@ public class MainScreenActivity extends AppCompatActivity implements PopupTextBo
     protected void onResume() {
         super.onResume();
         Log.i("Main", "onResume");
+        bindService(new Intent(this, IlMareService.class), locationServiceConnection,
+                Context.BIND_AUTO_CREATE);
         setUpMapIfNeeded();
     }
 
