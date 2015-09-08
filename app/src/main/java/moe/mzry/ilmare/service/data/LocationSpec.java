@@ -9,7 +9,7 @@ import moe.mzry.ilmare.service.data.eddystone.Beacon;
  */
 public class LocationSpec {
 
-    private LatLng location;
+    private FirebaseLatLng location;
 
     private Long level;
 
@@ -17,7 +17,7 @@ public class LocationSpec {
 
     public LocationSpec() {}
 
-    public LocationSpec(LatLng latLng, Long level, double r) {
+    public LocationSpec(FirebaseLatLng latLng, Long level, double r) {
         this.location = latLng;
         this.level = level;
         this.r = r;
@@ -25,14 +25,14 @@ public class LocationSpec {
 
     public LocationSpec of(Beacon beacon, double r) {
         // fetch real location from server or local configuration.
-        return new LocationSpec(new LatLng(0, 0), 1L, r);
+        return new LocationSpec(new FirebaseLatLng(0, 0), 1L, r);
     }
 
-    public LatLng getLocation() {
+    public FirebaseLatLng getLocation() {
         return location;
     }
 
-    public void setLocation(LatLng location) {
+    public void setLocation(FirebaseLatLng location) {
         this.location = location;
     }
 
