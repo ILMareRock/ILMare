@@ -1,7 +1,5 @@
 package moe.mzry.ilmare.service.data;
 
-import com.google.android.gms.maps.model.LatLng;
-
 import moe.mzry.ilmare.service.data.eddystone.Beacon;
 
 /**
