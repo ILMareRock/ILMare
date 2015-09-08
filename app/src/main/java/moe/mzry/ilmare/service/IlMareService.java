@@ -24,6 +24,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import moe.mzry.ilmare.service.data.FirebaseLatLng;
 import moe.mzry.ilmare.service.data.LocationSpec;
 import moe.mzry.ilmare.service.data.Message;
 import moe.mzry.ilmare.service.data.eddystone.Beacon;
@@ -135,8 +136,8 @@ public class IlMareService extends Service implements IlMareLocationProvider, Il
 
     // The following methods should be the real service
     @Override
-    public LatLng getLocation() {
-        return new LatLng(123, 456);
+    public FirebaseLatLng getLocation() {
+        return new FirebaseLatLng(123, 456);
     }
 
     @Override
@@ -169,7 +170,7 @@ public class IlMareService extends Service implements IlMareLocationProvider, Il
     @Override
     public void createMessage(Message message, LocationSpec locationSpec) {
         Firebase newMessageRef = firebaseMessagesRef.push();
-        newMessageRef.child("message").setValue(message);
-        newMessageRef.child("locationSpec").setValue(locationSpec);
+        message.setLocationSpec(locationSpec);
+        newMessageRef.setValue(message);
     }
 }

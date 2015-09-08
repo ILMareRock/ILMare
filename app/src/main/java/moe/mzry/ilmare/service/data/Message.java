@@ -6,6 +6,7 @@ package moe.mzry.ilmare.service.data;
 public class Message {
 
     private String content;
+    private LocationSpec locationSpec;
 
     public Message() {}
 
@@ -19,5 +20,13 @@ public class Message {
 
     public void setContent(String content) {
         this.content = content;
+    }
+
+    public LocationSpec getLocationSpec() {
+        return locationSpec;
+    }
+
+    public void setLocationSpec(LocationSpec locationSpec) {
+        this.locationSpec = locationSpec;
     }
 }
