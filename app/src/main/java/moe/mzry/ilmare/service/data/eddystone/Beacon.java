@@ -14,8 +14,6 @@
 
 package moe.mzry.ilmare.service.data.eddystone;
 
-import com.google.common.base.Objects;
-
 public class Beacon {
     final String deviceAddress;
     int rssi;
@@ -49,9 +47,7 @@ public class Beacon {
 
         @Override
         public String toString() {
-            return Objects.toStringHelper(this).add("uid", uidValue)
-                    .add("txPower", txPower)
-                    .toString();
+            return super.toString() + "[uid = " + uidValue + ", txPower = " + txPower + "]";
         }
     }
 
@@ -98,13 +94,8 @@ public class Beacon {
 
         @Override
         public String toString() {
-            return Objects.toStringHelper(this)
-                    .add("version", version)
-                    .add("voltage", voltage)
-                    .add("temp", temp)
-                    .add("advCnt", advCnt)
-                    .add("secCnt", secCnt)
-                    .toString();
+            return super.toString() + "[version = " + version + ", voltage = " + voltage
+                    + ", temp = " + temp + ", advCnt = " + advCnt + ", secCnt = " + secCnt + "]";
         }
     }
 
@@ -187,15 +178,10 @@ public class Beacon {
 
     @Override
     public String toString() {
-        return Objects.toStringHelper(this)
-                .add("device", deviceAddress)
-                .add("rssi", rssi)
-                .add("distance", distanceFromRssi())
-                .add("hasUidFrame", hasUidFrame)
-                .add("uidFrame", uidStatus)
-                .add("hasTlmFrame", hasTlmFrame)
-                .add("tlmFrame", tlmStatus)
-                .toString();
+        return super.toString() + "[device = " + deviceAddress + ", rssi = " + rssi
+                + ", distance = " + distanceFromRssi() + ", hasUidFrame = " + hasUidFrame
+                + ", uidFrame = " + uidStatus + ", hasTlmFrame = " + hasTlmFrame
+                + ", tlmFrame = " + tlmStatus + "]";
     }
 
     public double distanceFromRssi() {
