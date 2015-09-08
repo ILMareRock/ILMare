@@ -17,6 +17,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 
 import com.astuetz.PagerSlidingTabStrip;
 import com.getbase.floatingactionbutton.AddFloatingActionButton;
@@ -25,6 +26,7 @@ import com.google.android.gms.maps.SupportMapFragment;
 import moe.mzry.ilmare.R;
 import moe.mzry.ilmare.fragments.MessageListFragment;
 import moe.mzry.ilmare.service.IlMareService;
+import moe.mzry.ilmare.service.data.Message;
 import moe.mzry.ilmare.views.PopupTextBox;
 
 /**
@@ -42,6 +44,7 @@ public class MainScreenActivity extends AppCompatActivity implements PopupTextBo
     private Toolbar toolbar;
     private AddFloatingActionButton newMessageButton;
     private PopupTextBox newMessageTextBox;
+    private LinearLayout fabGroup;
     private InputMethodManager inputManager;
 
     @Override
@@ -56,7 +59,7 @@ public class MainScreenActivity extends AppCompatActivity implements PopupTextBo
         toolbar = (Toolbar) findViewById(R.id.main_screen_toolbar);
         newMessageButton = (AddFloatingActionButton) findViewById(R.id.newMessageButton);
         newMessageTextBox = (PopupTextBox) findViewById(R.id.newMessageTextBox);
-
+        fabGroup = (LinearLayout) findViewById(R.id.fab_group);
         newMessageTextBox.setEventHandler(this);
         newMessageTextBox.setVisibility(View.INVISIBLE);
         setSupportActionBar(toolbar);
@@ -105,24 +108,12 @@ public class MainScreenActivity extends AppCompatActivity implements PopupTextBo
             @Override
             public void onClick(View v) {
                 popupNewMessageTextBox();
-                /*Intent intent = new Intent();
-                intent.setClass(MainScreenActivity.this, NewMessageActivity.class);
-                Bundle bundle = new Bundle();
-
-                LatLng location = ilMareService.getLocation();
-                Long level = ilMareService.getLevel();
-                bundle.putDouble("lat", location.latitude);
-                bundle.putDouble("lon", location.longitude);
-                bundle.putLong("level", level);
-
-                startActivityForResult(intent, CREATE_MESSAGE_REQUEST, bundle);
-                MainScreenActivity.this.finish();*/
             }
         });
     }
 
     private void popupNewMessageTextBox() {
-        newMessageButton.setVisibility(View.INVISIBLE);
+        fabGroup.setVisibility(View.INVISIBLE);
         newMessageTextBox.setVisibility(View.VISIBLE);
         newMessageTextBox.requestFocus();
         inputManager.showSoftInput(newMessageTextBox, 0);
@@ -131,7 +122,6 @@ public class MainScreenActivity extends AppCompatActivity implements PopupTextBo
     }
 
     private void backToMainScreen() {
-        newMessageButton.setVisibility(View.VISIBLE);
         newMessageTextBox.setVisibility(View.INVISIBLE);
         newMessageTextBox.clearFocus();
         // Force hide keyboard
@@ -139,6 +129,7 @@ public class MainScreenActivity extends AppCompatActivity implements PopupTextBo
         toolbar.setTitle(R.string.title_activity_main_screen);
         newMessageTextBox.setText("");
         getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+        fabGroup.setVisibility(View.VISIBLE);
     }
 
     @Override
@@ -153,7 +144,7 @@ public class MainScreenActivity extends AppCompatActivity implements PopupTextBo
 
     private void sendMessage(String message) {
         Log.i("NewMessage", message);
-        // todo
+        ilMareService.createMessage(new Message(message), ilMareService.getLocationSpec());
         backToMainScreen();
     }
 

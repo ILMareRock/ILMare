@@ -16,12 +16,11 @@ import android.os.IBinder;
 import android.os.ParcelUuid;
 import android.util.Log;
 
+import com.firebase.client.Firebase;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.common.base.Predicate;
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -35,9 +34,14 @@ import moe.mzry.ilmare.service.data.eddystone.Utils;
  */
 public class IlMareService extends Service implements IlMareLocationProvider, IlMareDataProvider {
 
+    private static final String FIREBASE_URL = "https://ilmare.firebaseio.com/";
+    private static final String FIREBASE_MESSAGES_SPEC = "messages";
+    private Firebase firebaseRef;
+    private Firebase firebaseMessagesRef;
+
     private final IlMareServiceBinder ilMareServiceBinder = new IlMareServiceBinder();
     private BluetoothLeScanner scanner;
-    private Map<String, Beacon> beaconMap = Maps.newHashMap();
+    private Map<String, Beacon> beaconMap = new HashMap<>();
 
     private ScanCallback scanCallback;
     private static final ScanSettings SCAN_SETTINGS =
@@ -55,7 +59,7 @@ public class IlMareService extends Service implements IlMareLocationProvider, Il
     }
 
     // Attempts to create the scanner.
-    private void init() {
+    private void initScanner() {
         BluetoothManager manager = (BluetoothManager) getSystemService(Context.BLUETOOTH_SERVICE);
         BluetoothAdapter btAdapter = manager.getAdapter();
         if (btAdapter == null) {
@@ -68,11 +72,17 @@ public class IlMareService extends Service implements IlMareLocationProvider, Il
         }
     }
 
+    private void initFirebase() {
+        firebaseRef = new Firebase(FIREBASE_URL);
+        firebaseMessagesRef = firebaseRef.child(FIREBASE_MESSAGES_SPEC);
+    }
+
     @Override
     public void onCreate() {
         super.onCreate();
         // create bluetooth scanner.
-        init();
+        initScanner();
+        initFirebase();
         Log.i("IlMareService", "onCreate");
     }
 
@@ -106,10 +116,9 @@ public class IlMareService extends Service implements IlMareLocationProvider, Il
             }
         };
 
-        scanner.startScan(Lists.newArrayList(
-                        new ScanFilter.Builder().setServiceUuid(EDDYSTONE_SERVICE_UUID)
-                                .build()),
-                SCAN_SETTINGS, scanCallback);
+        List<ScanFilter> scanFilters = new ArrayList<>();
+        scanFilters.add(new ScanFilter.Builder().setServiceUuid(EDDYSTONE_SERVICE_UUID).build());
+        scanner.startScan(scanFilters, SCAN_SETTINGS, scanCallback);
         return ilMareServiceBinder;
     }
 
@@ -136,15 +145,20 @@ public class IlMareService extends Service implements IlMareLocationProvider, Il
     }
 
     @Override
+    public LocationSpec getLocationSpec() {
+        return new LocationSpec(getLocation(), getLevel(), 1.0);
+    }
+
+    @Override
     public List<Beacon> getNearbyBeacons() {
         // only return the beacons scanned in last 5 seconds
-        return Lists.newArrayList(Iterables.filter(beaconMap.values(), new Predicate<Beacon>() {
-            @Override
-            public boolean apply(Beacon input) {
-                return System.currentTimeMillis() - input.getTimestamp()
-                        < 5 /* s */ * 1000000;
+        List<Beacon> nearbyBeacons = new ArrayList<>();
+        for (Beacon beacon : beaconMap.values()) {
+            if (System.currentTimeMillis() - beacon.getTimestamp() < 5 /* s */ * 1000000) {
+                nearbyBeacons.add(beacon);
             }
-        }));
+        }
+        return nearbyBeacons;
     }
 
     @Override
@@ -154,5 +168,8 @@ public class IlMareService extends Service implements IlMareLocationProvider, Il
 
     @Override
     public void createMessage(Message message, LocationSpec locationSpec) {
+        Firebase newMessageRef = firebaseMessagesRef.push();
+        newMessageRef.child("message").setValue(message);
+        newMessageRef.child("locationSpec").setValue(locationSpec);
     }
 }

@@ -39,32 +39,35 @@
         android:layout_below="@id/tabs"
         android:layout_alignParentBottom="true"/>
 
-    <com.getbase.floatingactionbutton.AddFloatingActionButton
-        android:id="@+id/newMessageButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_marginBottom="16dp"
-        android:layout_alignParentRight="true"
-        android:layout_marginRight="16dp"
-        android:elevation="4dp"
-        android:background="@android:color/white"
-        fab:fab_colorNormal="@color/primary"
-        fab:fab_colorPressed="@color/primary_dark"/>
+    <LinearLayout
+            android:id="@+id/fab_group"
+            android:orientation="vertical"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="16dp"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="16dp">
+        <com.getbase.floatingactionbutton.FloatingActionButton
+                android:id="@+id/virtualViewButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:elevation="4dp"
+                android:background="@android:color/white"
+                fab:fab_icon="@drawable/ic_photo_camera_white_48dp"
+                fab:fab_colorNormal="@color/primary"
+                fab:fab_colorPressed="@color/primary_dark"
+                android:onClick="onVirtualView" />
 
-    <com.getbase.floatingactionbutton.FloatingActionButton
-        android:id="@+id/virtualViewButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginRight="16dp"
-        android:elevation="4dp"
-        android:background="@android:color/white"
-        fab:fab_icon="@drawable/ic_photo_camera_white_48dp"
-        fab:fab_colorNormal="@color/primary"
-        fab:fab_colorPressed="@color/primary_dark"
-        android:layout_alignTop="@+id/newMessageButton"
-        android:layout_toStartOf="@+id/newMessageButton"
-        android:onClick="onVirtualView" />
+        <com.getbase.floatingactionbutton.AddFloatingActionButton
+                android:id="@+id/newMessageButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:elevation="4dp"
+                android:background="@android:color/white"
+                fab:fab_colorNormal="@color/primary"
+                fab:fab_colorPressed="@color/primary_dark"/>
+    </LinearLayout>
 
     <moe.mzry.ilmare.views.PopupTextBox
         android:layout_width="match_parent"
