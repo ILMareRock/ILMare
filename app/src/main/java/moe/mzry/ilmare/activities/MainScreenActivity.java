@@ -25,6 +25,7 @@ import com.google.android.gms.maps.SupportMapFragment;
 
 import moe.mzry.ilmare.MainApp;
 import moe.mzry.ilmare.R;
+import moe.mzry.ilmare.fragments.BeaconListFragment;
 import moe.mzry.ilmare.fragments.MessageListFragment;
 import moe.mzry.ilmare.service.IlMareService;
 import moe.mzry.ilmare.service.data.Message;
@@ -37,6 +38,7 @@ public class MainScreenActivity extends AppCompatActivity implements PopupTextBo
 
     private SupportMapFragment supportMapFragment;
     private MessageListFragment messageListFragment;
+    private BeaconListFragment beaconListFragment;
     private static final int CREATE_MESSAGE_REQUEST = 1;
 
     private boolean locationServiceRunning = false;
@@ -65,6 +67,10 @@ public class MainScreenActivity extends AppCompatActivity implements PopupTextBo
         newMessageTextBox.setVisibility(View.INVISIBLE);
         setSupportActionBar(toolbar);
 
+        setUpMapIfNeeded();
+        setUpMessageList();
+        setUpBeaconList();
+
         // Initialize the ViewPager and set an adapter
         ViewPager pager = (ViewPager) findViewById(R.id.viewpager);
         pager.setAdapter(new FragmentStatePagerAdapter(getSupportFragmentManager()) {
@@ -72,18 +78,16 @@ public class MainScreenActivity extends AppCompatActivity implements PopupTextBo
             public Fragment getItem(int position) {
                 switch (position) {
                     case 0:
-                        return setUpMapIfNeeded();
+                        return supportMapFragment;
                     case 1:
-                        return setUpMessageList();
+                        return messageListFragment;
                     default:
-                        Log.i("PagerAdapter", "How many times;;;");
-                        return SupportMapFragment.newInstance();
+                        return beaconListFragment;
                 }
             }
 
             @Override
             public int getCount() {
-                Log.i("Main", "getCount!");
                 return 3;
             }
 
@@ -206,6 +210,13 @@ public class MainScreenActivity extends AppCompatActivity implements PopupTextBo
         return messageListFragment;
     }
 
+    private BeaconListFragment setUpBeaconList() {
+        if (beaconListFragment == null) {
+            beaconListFragment = BeaconListFragment.newInstance();
+        }
+        return beaconListFragment;
+    }
+
     public ServiceConnection locationServiceConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
@@ -215,12 +226,20 @@ public class MainScreenActivity extends AppCompatActivity implements PopupTextBo
             MainApp.setDataProvider(ilMareService);
             MainApp.setLocationProvider(ilMareService);
             locationServiceRunning = true;
+
+            messageListFragment.onServiceConnected(name, service);
+            beaconListFragment.onServiceConnected(name, service);
+            MapController.INSTANCE.onServiceConnected(name, service);
         }
 
         @Override
         public void onServiceDisconnected(ComponentName name) {
             Log.i("ServiceConnection", "disconnected!!");
             locationServiceRunning = false;
+
+            messageListFragment.onServiceDisconnected(name);
+            beaconListFragment.onServiceDisconnected(name);
+            MapController.INSTANCE.onServiceDisconnected(name);
         }
     };
 }

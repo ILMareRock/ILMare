@@ -16,8 +16,10 @@ import android.os.IBinder;
 import android.os.ParcelUuid;
 import android.util.Log;
 
+import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
-import com.google.android.gms.maps.model.LatLng;
+import com.firebase.client.FirebaseError;
+import com.firebase.client.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -40,6 +42,8 @@ public class IlMareService extends Service implements IlMareLocationProvider, Il
     private static final String FIREBASE_MESSAGES_SPEC = "messages";
     private Firebase firebaseRef;
     private Firebase firebaseMessagesRef;
+
+    private static List<Callback<List<Beacon>>> beaconListeners = new ArrayList<>();
 
     private final IlMareServiceBinder ilMareServiceBinder = new IlMareServiceBinder();
     private BluetoothLeScanner scanner;
@@ -110,6 +114,10 @@ public class IlMareService extends Service implements IlMareLocationProvider, Il
                         beacon.updateRssi(result.getRssi()));
                 Log.i("BLE", deviceAddress + " " + Utils.toHexString(serviceData));
                 Log.i("Beacon", beacon.toString());
+
+                for (Callback<List<Beacon>> listener : beaconListeners) {
+                    listener.apply(getNearbyBeacons());
+                }
             }
 
             @Override
@@ -122,6 +130,11 @@ public class IlMareService extends Service implements IlMareLocationProvider, Il
         scanFilters.add(new ScanFilter.Builder().setServiceUuid(EDDYSTONE_SERVICE_UUID).build());
         scanner.startScan(scanFilters, SCAN_SETTINGS, scanCallback);
         return ilMareServiceBinder;
+    }
+
+    @Override
+    public void addBeaconListener(Callback<List<Beacon>> callback) {
+        beaconListeners.add(callback);
     }
 
     @Override
@@ -156,11 +169,30 @@ public class IlMareService extends Service implements IlMareLocationProvider, Il
         // only return the beacons scanned in last 5 seconds
         List<Beacon> nearbyBeacons = new ArrayList<>();
         for (Beacon beacon : beaconMap.values()) {
-            if (System.currentTimeMillis() - beacon.getTimestamp() < 5 /* s */ * 1000000) {
+            //if (System.currentTimeMillis() - beacon.getTimestamp() < 5 /* s */ * 1000000) {
                 nearbyBeacons.add(beacon);
-            }
+            //}
         }
         return nearbyBeacons;
+    }
+
+    @Override
+    public void addMessageListener(final Callback<List<Message>> callback) {
+        firebaseMessagesRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot snapshot) {
+                List<Message> messages = new ArrayList<>();
+                for (DataSnapshot messageSnapshot: snapshot.getChildren()) {
+                    messages.add(messageSnapshot.getValue(Message.class));
+                }
+                callback.apply(messages);
+            }
+
+            @Override
+            public void onCancelled(FirebaseError firebaseError) {
+
+            }
+        });
     }
 
     @Override

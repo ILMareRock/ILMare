@@ -6,11 +6,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.firebase.client.DataSnapshot;
-import com.firebase.client.Firebase;
-import com.firebase.client.FirebaseError;
-import com.firebase.client.ValueEventListener;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -46,25 +41,6 @@ public class MessageListAdapter extends RecyclerView.Adapter<MessageListAdapter.
 
     public MessageListAdapter() {
         messageList = new ArrayList<>();
-
-        // TODO: use service instead
-        Firebase firebaseMessagesRef = new Firebase("https://ilmare.firebaseio.com/")
-                .child("messages");
-        firebaseMessagesRef.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot snapshot) {
-                List<Message> messages = new ArrayList<>();
-                for (DataSnapshot messageSnapshot: snapshot.getChildren()) {
-                    messages.add(messageSnapshot.getValue(Message.class));
-                }
-                apply(messages);
-            }
-
-            @Override
-            public void onCancelled(FirebaseError firebaseError) {
-
-            }
-        });
     }
 
     public void apply(List<Message> messages) {
