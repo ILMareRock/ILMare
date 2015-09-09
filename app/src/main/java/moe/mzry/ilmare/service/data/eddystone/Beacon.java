@@ -189,8 +189,20 @@ public class Beacon {
     }
 
     public double distanceFromRssi() {
-        int pathLoss = uidStatus.txPower - rssi;
-        return Math.pow(10, (pathLoss - 41) / 20.0);
+        int txPower = uidStatus.txPower;
+        if (rssi == 0) {
+            return -1.0; // if we cannot determine accuracy, return -1.
+        }
+
+        double ratio = rssi * 1.0 / txPower;
+        if (ratio < 1.0) {
+            return Math.pow(ratio,10);
+        }
+        else {
+            return (0.89976)*Math.pow(ratio,7.7095) + 0.111;
+        }
+        //int pathLoss = uidStatus.txPower - rssi;
+        //return Math.pow(10, (pathLoss - 41) / 20.0);
     }
 
     /**

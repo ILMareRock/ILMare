@@ -40,8 +40,10 @@ public class IlMareService extends Service implements IlMareLocationProvider, Il
 
     private static final String FIREBASE_URL = "https://ilmare.firebaseio.com/";
     private static final String FIREBASE_MESSAGES_SPEC = "messages";
+    private static final String FIREBASE_BEACONS_SPEC = "beacons";
     private Firebase firebaseRef;
     private Firebase firebaseMessagesRef;
+    private Firebase firebaseBeaconsRef;
 
     private static List<Callback<List<Beacon>>> beaconListeners = new ArrayList<>();
 
@@ -81,6 +83,7 @@ public class IlMareService extends Service implements IlMareLocationProvider, Il
     private void initFirebase() {
         firebaseRef = new Firebase(FIREBASE_URL);
         firebaseMessagesRef = firebaseRef.child(FIREBASE_MESSAGES_SPEC);
+        firebaseBeaconsRef = firebaseRef.child(FIREBASE_BEACONS_SPEC);
     }
 
     @Override
@@ -157,6 +160,32 @@ public class IlMareService extends Service implements IlMareLocationProvider, Il
     @Override
     public Long getLevel() {
         return 1L;
+    }
+
+    @Override
+    public void getBeaconLocation(Beacon beacon, final Callback<LocationSpec> callback) {
+        Firebase beaconRef = firebaseBeaconsRef.child(beacon.getDeviceAddress());
+        beaconRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    callback.apply(dataSnapshot.getValue(LocationSpec.class));
+                } else {
+                    callback.apply(getLocationSpec());
+                }
+            }
+
+            @Override
+            public void onCancelled(FirebaseError firebaseError) {
+                // no op
+            }
+        });
+    }
+
+    @Override
+    public void setBeaconLocation(Beacon beacon, LocationSpec locationSpec) {
+        Firebase beaconRef = firebaseBeaconsRef.child(beacon.getDeviceAddress());
+        beaconRef.setValue(locationSpec);
     }
 
     @Override
