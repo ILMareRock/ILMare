@@ -4,16 +4,40 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:weightSum="3"
     tools:context="moe.mzry.ilmare.fragments.MessageListFragment">
 
-    <android.support.v7.widget.RecyclerView
-            android:id="@+id/messageListView"
-            android:scrollbars="vertical"
+    <LinearLayout
             android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:dividerHeight="0.5dp"
-            android:padding="1dp"
-            android:divider = "@color/divider"
-            />
+            android:layout_height="wrap_content"
+            android:layout_weight="1">
+        <android.support.v7.widget.RecyclerView
+                android:id="@+id/messageListView"
+                android:scrollbars="vertical"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:dividerHeight="0.5dp"
+                android:padding="1dp"
+                android:divider = "@color/divider"
+                />
+    </LinearLayout>
+
+    <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="2"
+            android:elevation="4dp"
+            android:background="@color/accentFallback">
+        <android.support.v7.widget.RecyclerView
+                android:id="@+id/beaconListView"
+                android:scrollbars="vertical"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:dividerHeight="0.5dp"
+                android:padding="1dp"
+                android:divider = "@color/divider"
+                />
+    </LinearLayout>
 
 </LinearLayout>

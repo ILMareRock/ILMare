@@ -12,11 +12,9 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.EditText;
 import android.widget.LinearLayout;
 
 import com.astuetz.PagerSlidingTabStrip;
@@ -25,7 +23,6 @@ import com.google.android.gms.maps.SupportMapFragment;
 
 import moe.mzry.ilmare.MainApp;
 import moe.mzry.ilmare.R;
-import moe.mzry.ilmare.fragments.BeaconListFragment;
 import moe.mzry.ilmare.fragments.MessageListFragment;
 import moe.mzry.ilmare.service.IlMareService;
 import moe.mzry.ilmare.service.data.Message;
@@ -38,7 +35,6 @@ public class MainScreenActivity extends AppCompatActivity implements PopupTextBo
 
     private SupportMapFragment supportMapFragment;
     private MessageListFragment messageListFragment;
-    private BeaconListFragment beaconListFragment;
     private static final int CREATE_MESSAGE_REQUEST = 1;
 
     private boolean locationServiceRunning = false;
@@ -69,7 +65,6 @@ public class MainScreenActivity extends AppCompatActivity implements PopupTextBo
 
         setUpMapIfNeeded();
         setUpMessageList();
-        setUpBeaconList();
 
         // Initialize the ViewPager and set an adapter
         ViewPager pager = (ViewPager) findViewById(R.id.viewpager);
@@ -79,16 +74,14 @@ public class MainScreenActivity extends AppCompatActivity implements PopupTextBo
                 switch (position) {
                     case 0:
                         return supportMapFragment;
-                    case 1:
-                        return messageListFragment;
                     default:
-                        return beaconListFragment;
+                        return messageListFragment;
                 }
             }
 
             @Override
             public int getCount() {
-                return 3;
+                return 2;
             }
 
             @Override
@@ -98,8 +91,6 @@ public class MainScreenActivity extends AppCompatActivity implements PopupTextBo
                         return "MAP";
                     case 1:
                         return "LIST";
-                    case 2:
-                        return "DEBUG";
                 }
                 return "";
             }
@@ -210,13 +201,6 @@ public class MainScreenActivity extends AppCompatActivity implements PopupTextBo
         return messageListFragment;
     }
 
-    private BeaconListFragment setUpBeaconList() {
-        if (beaconListFragment == null) {
-            beaconListFragment = BeaconListFragment.newInstance();
-        }
-        return beaconListFragment;
-    }
-
     public ServiceConnection locationServiceConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
@@ -228,7 +212,6 @@ public class MainScreenActivity extends AppCompatActivity implements PopupTextBo
             locationServiceRunning = true;
 
             messageListFragment.onServiceConnected(name, service);
-            beaconListFragment.onServiceConnected(name, service);
             MapController.INSTANCE.onServiceConnected(name, service);
         }
 
@@ -238,7 +221,6 @@ public class MainScreenActivity extends AppCompatActivity implements PopupTextBo
             locationServiceRunning = false;
 
             messageListFragment.onServiceDisconnected(name);
-            beaconListFragment.onServiceDisconnected(name);
             MapController.INSTANCE.onServiceDisconnected(name);
         }
     };
