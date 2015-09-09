@@ -25,6 +25,7 @@ import com.google.android.gms.maps.SupportMapFragment;
 
 import moe.mzry.ilmare.MainApp;
 import moe.mzry.ilmare.R;
+import moe.mzry.ilmare.fragments.BeaconListFragment;
 import moe.mzry.ilmare.fragments.MessageListFragment;
 import moe.mzry.ilmare.service.IlMareService;
 import moe.mzry.ilmare.service.data.Message;
@@ -37,6 +38,7 @@ public class MainScreenActivity extends AppCompatActivity implements PopupTextBo
 
     private SupportMapFragment supportMapFragment;
     private MessageListFragment messageListFragment;
+    private BeaconListFragment beaconListFragment;
     private static final int CREATE_MESSAGE_REQUEST = 1;
 
     private boolean locationServiceRunning = false;
@@ -76,8 +78,7 @@ public class MainScreenActivity extends AppCompatActivity implements PopupTextBo
                     case 1:
                         return setUpMessageList();
                     default:
-                        Log.i("PagerAdapter", "How many times;;;");
-                        return SupportMapFragment.newInstance();
+                        return setUpBeaconList();
                 }
             }
 
@@ -204,6 +205,13 @@ public class MainScreenActivity extends AppCompatActivity implements PopupTextBo
             messageListFragment = MessageListFragment.newInstance();
         }
         return messageListFragment;
+    }
+
+    private BeaconListFragment setUpBeaconList() {
+        if (beaconListFragment == null) {
+            beaconListFragment = BeaconListFragment.newInstance();
+        }
+        return beaconListFragment;
     }
 
     public ServiceConnection locationServiceConnection = new ServiceConnection() {

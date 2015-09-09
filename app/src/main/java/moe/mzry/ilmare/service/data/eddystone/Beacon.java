@@ -176,6 +176,10 @@ public class Beacon {
         return timestamp;
     }
 
+    public String getDeviceAddress() {
+        return deviceAddress;
+    }
+
     @Override
     public String toString() {
         return super.toString() + "[device = " + deviceAddress + ", rssi = " + rssi
