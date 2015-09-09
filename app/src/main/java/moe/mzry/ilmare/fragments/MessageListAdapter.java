@@ -24,14 +24,17 @@ public class MessageListAdapter extends RecyclerView.Adapter<MessageListAdapter.
 
     public static class MessageViewHolder extends RecyclerView.ViewHolder {
         private TextView messageContent;
+        private TextView messageInfo;
 
         public MessageViewHolder(View messageView) {
             super(messageView);
             messageContent = (TextView) messageView.findViewById(R.id.message_content);
+            messageInfo = (TextView) messageView.findViewById(R.id.list_item_info);
         }
 
         public void setMessage(Message message) {
             messageContent.setText(message.getContent());
+            messageInfo.setText(message.getCreationTime().toString());
         }
     }
 
