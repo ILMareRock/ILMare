@@ -13,6 +13,8 @@ public interface IlMareLocationProvider {
 
     LocationSpec getLocationSpec();
 
+    void addBeaconListener(Callback<List<Beacon>> callback);
+
     FirebaseLatLng getLocation();
 
     Long getLevel();
