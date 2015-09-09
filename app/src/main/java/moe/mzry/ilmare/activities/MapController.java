@@ -14,6 +14,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import moe.mzry.ilmare.MainApp;
@@ -28,6 +29,8 @@ public class MapController implements OnMapReadyCallback, GoogleMap.OnMapClickLi
         GoogleMap.OnMapLoadedCallback, GoogleMap.OnMarkerClickListener, ServiceConnection {
 
     public static MapController INSTANCE = new MapController();
+
+    private List<Message> messageList = new ArrayList<>();
     private GoogleMap map;
     private MapController() {}
 
@@ -43,8 +46,9 @@ public class MapController implements OnMapReadyCallback, GoogleMap.OnMapClickLi
     }
 
     public void renderMessages(List<Message> messages) {
+        messageList = messages;
         // MainApp.getLocationProvider().getLocationSpec();
-        for (Message msg : messages) {
+        for (Message msg : messageList) {
             LatLng curLoc = new LatLng(msg.getLocationSpec().getLocation().getLatitude(),
                     msg.getLocationSpec().getLocation().getLongitude());
             Log.i("loc", ">> latitude:" + msg.getLocationSpec().getLocation().getLatitude());
@@ -76,6 +80,7 @@ public class MapController implements OnMapReadyCallback, GoogleMap.OnMapClickLi
     public void onMapReady(final GoogleMap map) {
         Log.i("GoogleMap", "onMapReady!");
         this.map = map;
+        renderMessages(messageList);
 /*        // Add a marker in Sydney, Australia, and move the camera.
         LatLng sydney = new LatLng(-34, 151);
         map.setMyLocationEnabled(true);

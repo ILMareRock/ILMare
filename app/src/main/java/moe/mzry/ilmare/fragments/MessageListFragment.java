@@ -17,6 +17,7 @@ import moe.mzry.ilmare.R;
 import moe.mzry.ilmare.service.Callback;
 import moe.mzry.ilmare.service.IlMareDataProvider;
 import moe.mzry.ilmare.service.data.Message;
+import moe.mzry.ilmare.service.data.eddystone.Beacon;
 
 
 /**
@@ -25,8 +26,9 @@ import moe.mzry.ilmare.service.data.Message;
 public class MessageListFragment extends Fragment implements ServiceConnection {
 
     private static final MessageListAdapter messageListAdapter = new MessageListAdapter();
-    private RecyclerView.LayoutManager mLayoutManager;
+    private static final BeaconListAdapter beaconListAdapter = new BeaconListAdapter();
     private RecyclerView messageListView;
+    private RecyclerView beaconListView;
     // TODO: set the data provider and fill content when needed.
     private IlMareDataProvider dataProvider;
 
@@ -44,12 +46,16 @@ public class MessageListFragment extends Fragment implements ServiceConnection {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_message_list, container, false);
         messageListView = (RecyclerView) view.findViewById(R.id.messageListView);
+        beaconListView = (RecyclerView) view.findViewById(R.id.beaconListView);
 
         // use a linear layout manager
-        mLayoutManager = new LinearLayoutManager(this.getActivity());
-        messageListView.setLayoutManager(mLayoutManager);
+        RecyclerView.LayoutManager mLayoutManager1 = new LinearLayoutManager(this.getActivity());
+        RecyclerView.LayoutManager mLayoutManager2 = new LinearLayoutManager(this.getActivity());
+        messageListView.setLayoutManager(mLayoutManager1);
+        beaconListView.setLayoutManager(mLayoutManager2);
 
         messageListView.setAdapter(messageListAdapter);
+        beaconListView.setAdapter(beaconListAdapter);
         return view;
     }
 
@@ -59,6 +65,12 @@ public class MessageListFragment extends Fragment implements ServiceConnection {
             @Override
             public void apply(List<Message> data) {
                 messageListAdapter.apply(data);
+            }
+        });
+        MainApp.getLocationProvider().addBeaconListener(new Callback<List<Beacon>>() {
+            @Override
+            public void apply(List<Beacon> data) {
+                beaconListAdapter.apply(data);
             }
         });
     }
