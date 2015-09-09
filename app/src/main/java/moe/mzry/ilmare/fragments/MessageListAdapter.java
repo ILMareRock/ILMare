@@ -12,15 +12,19 @@ import com.firebase.client.FirebaseError;
 import com.firebase.client.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import moe.mzry.ilmare.R;
 import moe.mzry.ilmare.service.data.Message;
+import moe.mzry.ilmare.service.data.MessageComparators;
 
 /**
  * Message list adapter
  */
 public class MessageListAdapter extends RecyclerView.Adapter<MessageListAdapter.MessageViewHolder> {
+
+    private static int MAX_ITEM = 10;
 
     public static class MessageViewHolder extends RecyclerView.ViewHolder {
         private TextView messageContent;
@@ -64,7 +68,8 @@ public class MessageListAdapter extends RecyclerView.Adapter<MessageListAdapter.
     }
 
     public void apply(List<Message> messages) {
-        messageList = messages;
+        Collections.sort(messages, new MessageComparators.MessageCreationTimeComparator());
+        messageList = messages.subList(0, Math.min(messages.size(), MAX_ITEM));
         this.notifyDataSetChanged();
     }
 
