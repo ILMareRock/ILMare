@@ -26,6 +26,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import moe.mzry.ilmare.service.data.FirebaseLatLng;
 import moe.mzry.ilmare.service.data.LocationSpec;
@@ -97,6 +99,8 @@ public class IlMareService extends Service implements IlMareLocationProvider, Il
 
     @Override
     public IBinder onBind(Intent intent) {
+        final List<ScanFilter> scanFilters = new ArrayList<>();
+        scanFilters.add(new ScanFilter.Builder().setServiceUuid(EDDYSTONE_SERVICE_UUID).build());
         scanCallback = new ScanCallback() {
             @Override
             public void onScanResult(int callbackType, ScanResult result) {
@@ -121,6 +125,15 @@ public class IlMareService extends Service implements IlMareLocationProvider, Il
                 for (Callback<List<Beacon>> listener : beaconListeners) {
                     listener.apply(getNearbyBeacons());
                 }
+
+                Timer timer = new Timer();
+                timer.schedule(new TimerTask() {
+                    @Override
+                    public void run() {
+                        scanner.stopScan(scanCallback);
+                        scanner.startScan(scanFilters, SCAN_SETTINGS, scanCallback);
+                    }
+                }, 1000L);
             }
 
             @Override
@@ -129,8 +142,6 @@ public class IlMareService extends Service implements IlMareLocationProvider, Il
             }
         };
 
-        List<ScanFilter> scanFilters = new ArrayList<>();
-        scanFilters.add(new ScanFilter.Builder().setServiceUuid(EDDYSTONE_SERVICE_UUID).build());
         scanner.startScan(scanFilters, SCAN_SETTINGS, scanCallback);
         return ilMareServiceBinder;
     }
