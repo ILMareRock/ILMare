@@ -20,6 +20,7 @@ import com.firebase.client.Firebase;
 import com.google.android.gms.maps.model.LatLng;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -171,6 +172,7 @@ public class IlMareService extends Service implements IlMareLocationProvider, Il
     public void createMessage(Message message, LocationSpec locationSpec) {
         Firebase newMessageRef = firebaseMessagesRef.push();
         message.setLocationSpec(locationSpec);
+        message.setCreationTime(new Date());
         newMessageRef.setValue(message);
     }
 }
