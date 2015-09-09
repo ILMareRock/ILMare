@@ -138,7 +138,7 @@ public class IlMareService extends Service implements IlMareLocationProvider, Il
     // The following methods should be the real service
     @Override
     public FirebaseLatLng getLocation() {
-        return new FirebaseLatLng(123, 456);
+        return new FirebaseLatLng(-34, 151);
     }
 
     @Override

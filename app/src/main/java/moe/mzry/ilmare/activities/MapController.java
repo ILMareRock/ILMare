@@ -2,6 +2,10 @@ package moe.mzry.ilmare.activities;
 
 import android.util.Log;
 
+import com.firebase.client.DataSnapshot;
+import com.firebase.client.Firebase;
+import com.firebase.client.FirebaseError;
+import com.firebase.client.ValueEventListener;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -12,7 +16,14 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+import moe.mzry.ilmare.MainApp;
 import moe.mzry.ilmare.R;
+import moe.mzry.ilmare.service.data.Message;
+import moe.mzry.ilmare.service.data.MessageComparators;
 
 /**
  * A wrapper which contains a google map fragment.
@@ -34,11 +45,60 @@ public class MapController implements OnMapReadyCallback, GoogleMap.OnMapClickLi
         }
     }
 
+    public void apply(GoogleMap map, List<Message> messages) {
+        // MainApp.getLocationProvider().getLocationSpec();
+        for (Message msg : messages) {
+            LatLng curLoc = new LatLng(msg.getLocationSpec().getLocation().getLatitude(),
+                    msg.getLocationSpec().getLocation().getLongitude());
+            Log.i("loc", ">> latitude:" + msg.getLocationSpec().getLocation().getLatitude());
+            Log.i("loc", ">> longtitude:" + msg.getLocationSpec().getLocation().getLongitude());
+            map.setMyLocationEnabled(true);
+            map.moveCamera(CameraUpdateFactory.newLatLngZoom(curLoc, 13));
+            map.addMarker(new MarkerOptions()
+                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_launcher))
+                    .anchor(0.0f, 1.0f) // Anchors the marker on the bottom left
+                    .title(msg.getContent())
+                    .snippet("Content:" + msg.getContent() + " Time:" + msg.getCreationTime())
+                    .position(curLoc));
+        }
+        map.moveCamera(CameraUpdateFactory.newLatLngZoom(
+                new LatLng(
+                        MainApp.getLocationProvider().getLocationSpec().getLocation().getLatitude(),
+                        MainApp.getLocationProvider().getLocationSpec().getLocation().getLongitude()),
+                13));
+        CameraPosition cameraPosition = CameraPosition.builder()
+                .target(new LatLng(41.889, -87.622))
+                .zoom(13)
+                .bearing(90)
+                .build();
+        map.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition),
+                2000, null);
+    }
+
     @Override
-    public void onMapReady(GoogleMap map) {
+    public void onMapReady(final GoogleMap map) {
         Log.i("GoogleMap", "onMapReady!");
 
-        // Add a marker in Sydney, Australia, and move the camera.
+        // TODO: use service instead
+        Firebase firebaseMessagesRef = new Firebase("https://ilmare.firebaseio.com/")
+                .child("messages");
+        firebaseMessagesRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot snapshot) {
+                List<Message> messages = new ArrayList<>();
+                for (DataSnapshot messageSnapshot : snapshot.getChildren()) {
+                    messages.add(messageSnapshot.getValue(Message.class));
+                }
+                apply(map, messages);
+            }
+
+            @Override
+            public void onCancelled(FirebaseError firebaseError) {
+
+            }
+        });
+
+/*        // Add a marker in Sydney, Australia, and move the camera.
         LatLng sydney = new LatLng(-34, 151);
         map.setMyLocationEnabled(true);
         map.moveCamera(CameraUpdateFactory.newLatLngZoom(sydney, 13));
@@ -85,6 +145,7 @@ public class MapController implements OnMapReadyCallback, GoogleMap.OnMapClickLi
         // Animate the change in camera view over 2 seconds
         map.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition),
                 2000, null);
+                */
     }
 
     @Override
