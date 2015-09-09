@@ -7,7 +7,6 @@ import android.os.IBinder;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,7 +24,7 @@ import moe.mzry.ilmare.service.data.Message;
  */
 public class MessageListFragment extends Fragment implements ServiceConnection {
 
-    private final MessageListAdapter messageListAdapter;
+    private static final MessageListAdapter messageListAdapter = new MessageListAdapter();
     private RecyclerView.LayoutManager mLayoutManager;
     private RecyclerView messageListView;
     // TODO: set the data provider and fill content when needed.
@@ -38,13 +37,11 @@ public class MessageListFragment extends Fragment implements ServiceConnection {
 
     public MessageListFragment() {
         // Required empty public constructor
-        messageListAdapter = new MessageListAdapter();
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        Log.i("MessageListFragment", "onCreateView");
         View view = inflater.inflate(R.layout.fragment_message_list, container, false);
         messageListView = (RecyclerView) view.findViewById(R.id.messageListView);
 
@@ -61,7 +58,6 @@ public class MessageListFragment extends Fragment implements ServiceConnection {
         MainApp.getDataProvider().addMessageListener(new Callback<List<Message>>() {
             @Override
             public void apply(List<Message> data) {
-                Log.i("MessageListFragment", "Update messages");
                 messageListAdapter.apply(data);
             }
         });
