@@ -10,6 +10,7 @@ import android.opengl.GLUtils;
 import android.text.Layout;
 import android.text.StaticLayout;
 import android.text.TextPaint;
+import android.util.Log;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -43,7 +44,6 @@ public class Billboard implements Comparable<Billboard> {
   };
   private short drawOrder[] = { 0, 1, 2, 0, 2, 3 }; // order to draw vertices
 
-  private final int mProgram;
   private int mPositionHandle;
   private int mTexture;
   private int mTexCoord;
@@ -59,8 +59,7 @@ public class Billboard implements Comparable<Billboard> {
   private int textHeight;
   private static int corner = 50;
 
-  public Billboard(int program, String message, float x, float y) {
-    this.mProgram = program;
+  public Billboard(String message, float x, float y) {
     mX = x;
     mY = y;
     initShape();
@@ -178,7 +177,7 @@ public class Billboard implements Comparable<Billboard> {
     mTexHandle = texture[0];
   }
 
-  public void draw(float[] mvpMatrix) {
+  public void draw(int mProgram, float[] mvpMatrix) {
     float dx = mCx - mX;
     float dy = mCy - mY;
     double dist = Math.sqrt(dx * dx + dy * dy);

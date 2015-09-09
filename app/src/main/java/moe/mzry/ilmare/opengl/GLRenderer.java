@@ -3,12 +3,16 @@ package moe.mzry.ilmare.opengl;
 import android.opengl.GLES20;
 import android.opengl.GLSurfaceView;
 import android.opengl.Matrix;
+import android.util.Log;
 import android.util.SizeF;
 
 import java.util.Arrays;
+import java.util.List;
 
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
+
+import moe.mzry.ilmare.service.data.BillboardMessage;
 
 /**
  * Created by yfchen on 9/3/15.
@@ -32,6 +36,7 @@ public class GLRenderer implements GLSurfaceView.Renderer {
           "  gl_FragColor = texture2D(u_samplerTexture, v_texCoord);" +
           "}";
   private Billboard[] mBillboard;
+  private List<BillboardMessage> billboardMessages;
   private final float[] mMVPMatrix = new float[16];
   private final float[] mProjectionMatrix = new float[16];
   private float mFocalLength = 4f;
@@ -47,6 +52,7 @@ public class GLRenderer implements GLSurfaceView.Renderer {
       0, 0, 0, 1
   };
   private boolean ready = false;
+  private int mProgram;
 
   String[] messages = {
       "Let me say something",
@@ -79,18 +85,24 @@ public class GLRenderer implements GLSurfaceView.Renderer {
     GLES20.glEnable(GLES20.GL_BLEND);
     GLES20.glBlendFunc(GLES20.GL_SRC_ALPHA, GLES20.GL_ONE_MINUS_SRC_ALPHA);
 
-    int program = initShader();
+    mProgram = initShader();
 
-    mBillboard = new Billboard[20];
-    for (int i = 0; i < 20; i++) {
-      float x = (float) Math.random() * 20000 - 10000;
-      float y = (float) Math.random() * 20000 - 10000;
-      String txt = String.format("Id = (%d).", i);
-      txt += " " + messages[i];
-
-      mBillboard[i] = new Billboard(program, txt,
-          x, y);
+    if (billboardMessages == null) {
+      mBillboard = null;
+    } else {
+      createBillboards();
     }
+
+//    mBillboard = new Billboard[20];
+//    for (int i = 0; i < 20; i++) {
+//      float x = (float) Math.random() * 20000 - 10000;
+//      float y = (float) Math.random() * 20000 - 10000;
+//      String txt = String.format("Id = (%d).", i);
+//      txt += " " + messages[i];
+//
+//      mBillboard[i] = new Billboard(txt,
+//          x, y);
+//    }
   }
 
   int initShader() {
@@ -147,11 +159,26 @@ public class GLRenderer implements GLSurfaceView.Renderer {
     this.ready = ready;
   }
 
+  public void setBillboards(List<BillboardMessage> billboards) {
+    this.billboardMessages = billboards;
+    if (mProgram != 0) {
+      createBillboards();
+    }
+  }
+
+  private void createBillboards() {
+    mBillboard = new Billboard[billboardMessages.size()];
+    for (int i = 0; i < billboardMessages.size(); i ++) {
+      BillboardMessage b = billboardMessages.get(i);
+      mBillboard[i] = new Billboard(b.getContent(), b.getX(), b.getY());
+    }
+  }
+
   public void onDrawFrame(GL10 unused) {
     // Redraw background color
     GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT | GLES20.GL_DEPTH_BUFFER_BIT);
 
-    if (!ready) {
+    if (!ready || mBillboard == null) {
       return;
     }
     GLES20.glViewport(mCanvasWidth - mViewWidth, mCanvasHeight - mViewHeight, mViewWidth, mViewHeight);
@@ -171,7 +198,7 @@ public class GLRenderer implements GLSurfaceView.Renderer {
     Arrays.sort(mBillboard);
     GLES20.glDepthMask(false);
     for (int i = mBillboard.length - 1; i >= 0; i--) {
-      mBillboard[i].draw(mMVPMatrix);
+      mBillboard[i].draw(mProgram, mMVPMatrix);
     }
     GLES20.glDepthMask(true);
   }
