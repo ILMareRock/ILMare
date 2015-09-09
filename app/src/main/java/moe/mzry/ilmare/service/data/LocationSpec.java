@@ -45,4 +45,8 @@ public class LocationSpec {
     public void setR(double r) {
         this.r = r;
     }
+
+    public String toString() {
+        return location.toString();
+    }
 }

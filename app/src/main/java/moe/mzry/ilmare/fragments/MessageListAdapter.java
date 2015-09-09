@@ -33,7 +33,8 @@ public class MessageListAdapter extends RecyclerView.Adapter<MessageListAdapter.
 
         public void setMessage(Message message) {
             messageContent.setText(message.getContent());
-            messageInfo.setText(message.getCreationTime().toString());
+            messageInfo.setText(message.getCreationTime().toString() + " "
+                + message.getLocationSpec().toString());
         }
     }
 
