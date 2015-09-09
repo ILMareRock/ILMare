@@ -1,5 +1,7 @@
 package moe.mzry.ilmare.service.data;
 
+import java.util.Date;
+
 /**
  * Placeholder class for the user message.
  */
@@ -7,6 +9,7 @@ public class Message {
 
     private String content;
     private LocationSpec locationSpec;
+    private Date creationTime;
 
     public Message() {}
 
@@ -28,5 +31,13 @@ public class Message {
 
     public void setLocationSpec(LocationSpec locationSpec) {
         this.locationSpec = locationSpec;
+    }
+
+    public Date getCreationTime() {
+        return creationTime;
+    }
+
+    public void setCreationTime(Date creationTime) {
+        this.creationTime = creationTime;
     }
 }
