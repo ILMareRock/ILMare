@@ -19,6 +19,11 @@ public interface IlMareLocationProvider {
 
     Long getLevel();
 
+    void getBeaconLocation(Beacon beacon, Callback<LocationSpec> callback);
+
+    // For debug
+    void setBeaconLocation(Beacon beacon, LocationSpec locationSpec);
+
     // following information could be changed
     List<Beacon> getNearbyBeacons();
 }

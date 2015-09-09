@@ -11,4 +11,9 @@
 <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="title_activity_vr">VrActivity</string>
+
+    <!-- beacon dialog -->
+    <string name="beacon_lat">Latitude</string>
+    <string name="beacon_lng">Longitude</string>
+    <string name="beacon_level">Level</string>
 </resources>
