@@ -4,7 +4,6 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:orientation="vertical"
-    android:padding="16dp"
     android:gravity="center"
     android:layout_gravity="center">
 
@@ -13,16 +12,27 @@
         android:layout_width="fill_parent"
         android:id="@+id/message_content"
         android:textColor="@color/primary_text"
-        android:textSize="15sp"
+        android:textSize="16sp"
         android:layout_marginTop="3dp"
-        android:layout_marginBottom="8dp"/>
+        android:layout_marginBottom="8dp"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp"
+        android:paddingTop="8dp"/>
 
     <TextView
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:id="@+id/list_item_info"
-        android:textSize="11sp"
+        android:textSize="10sp"
         android:textColor="@color/secondary_text"
+        android:layout_marginBottom="12dp"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp"
         />
 
+    <View
+        android:id="@+id/list_item_divider"
+        android:layout_width="match_parent"
+        android:layout_height="0.25dp"
+        android:background="@color/divider" />
 </LinearLayout>
