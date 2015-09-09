@@ -23,6 +23,7 @@ import com.astuetz.PagerSlidingTabStrip;
 import com.getbase.floatingactionbutton.AddFloatingActionButton;
 import com.google.android.gms.maps.SupportMapFragment;
 
+import moe.mzry.ilmare.MainApp;
 import moe.mzry.ilmare.R;
 import moe.mzry.ilmare.fragments.MessageListFragment;
 import moe.mzry.ilmare.service.IlMareService;
@@ -211,6 +212,8 @@ public class MainScreenActivity extends AppCompatActivity implements PopupTextBo
             Log.i("ServiceConnection", "connected!!");
             IlMareService.IlMareServiceBinder binder = (IlMareService.IlMareServiceBinder) service;
             ilMareService = binder.getService();
+            MainApp.setDataProvider(ilMareService);
+            MainApp.setLocationProvider(ilMareService);
             locationServiceRunning = true;
         }
 
