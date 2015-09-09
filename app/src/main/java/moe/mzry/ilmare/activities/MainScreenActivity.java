@@ -21,24 +21,26 @@ import com.astuetz.PagerSlidingTabStrip;
 import com.getbase.floatingactionbutton.AddFloatingActionButton;
 import com.google.android.gms.maps.SupportMapFragment;
 
+import java.util.List;
+
 import moe.mzry.ilmare.MainApp;
 import moe.mzry.ilmare.R;
 import moe.mzry.ilmare.fragments.MessageListFragment;
+import moe.mzry.ilmare.service.DataModel;
 import moe.mzry.ilmare.service.IlMareService;
 import moe.mzry.ilmare.service.data.Message;
+import moe.mzry.ilmare.service.data.eddystone.Beacon;
 import moe.mzry.ilmare.views.PopupTextBox;
 
 /**
  * Main activity.
  */
-public class MainScreenActivity extends AppCompatActivity implements PopupTextBox.EventHandler {
+public class MainScreenActivity extends AppCompatActivity implements PopupTextBox.EventHandler,
+    DataModel.Listener {
 
     private SupportMapFragment supportMapFragment;
     private MessageListFragment messageListFragment;
     private static final int CREATE_MESSAGE_REQUEST = 1;
-
-    private boolean locationServiceRunning = false;
-    private IlMareService ilMareService;
 
     private Toolbar toolbar;
     private AddFloatingActionButton newMessageButton;
@@ -140,7 +142,10 @@ public class MainScreenActivity extends AppCompatActivity implements PopupTextBo
 
     private void sendMessage(String message) {
         Log.i("NewMessage", message);
-        ilMareService.createMessage(new Message(message), ilMareService.getLocationSpec());
+        IlMareService service = ((MainApp) getApplicationContext()).getIlMareService();
+        if (service != null) {
+            service.createMessage(new Message(message), service.getLocationSpec());
+        }
         backToMainScreen();
     }
 
@@ -168,16 +173,28 @@ public class MainScreenActivity extends AppCompatActivity implements PopupTextBo
     protected void onResume() {
         super.onResume();
         Log.i("Main", "onResume");
-        bindService(new Intent(this, IlMareService.class), locationServiceConnection,
-                Context.BIND_AUTO_CREATE);
+        DataModel.INSTANCE.addListener(this);
         setUpMapIfNeeded();
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        if (locationServiceRunning) {
-            unbindService(locationServiceConnection);
+        DataModel.INSTANCE.removeListener(this);
+    }
+
+    @Override
+    public void onMessageChanged(List<Message> messageList) {
+        MapController.INSTANCE.renderMessages(messageList);
+        if (messageListFragment != null) {
+            messageListFragment.renderMessage(messageList);
+        }
+    }
+
+    @Override
+    public void onBeaconChanged(List<Beacon> beaconList) {
+        if (messageListFragment != null) {
+            messageListFragment.renderBeacon(beaconList);
         }
     }
 
@@ -200,28 +217,4 @@ public class MainScreenActivity extends AppCompatActivity implements PopupTextBo
         }
         return messageListFragment;
     }
-
-    public ServiceConnection locationServiceConnection = new ServiceConnection() {
-        @Override
-        public void onServiceConnected(ComponentName name, IBinder service) {
-            Log.i("ServiceConnection", "connected!!");
-            IlMareService.IlMareServiceBinder binder = (IlMareService.IlMareServiceBinder) service;
-            ilMareService = binder.getService();
-            MainApp.setDataProvider(ilMareService);
-            MainApp.setLocationProvider(ilMareService);
-            locationServiceRunning = true;
-
-            messageListFragment.onServiceConnected(name, service);
-            MapController.INSTANCE.onServiceConnected(name, service);
-        }
-
-        @Override
-        public void onServiceDisconnected(ComponentName name) {
-            Log.i("ServiceConnection", "disconnected!!");
-            locationServiceRunning = false;
-
-            messageListFragment.onServiceDisconnected(name);
-            MapController.INSTANCE.onServiceDisconnected(name);
-        }
-    };
 }

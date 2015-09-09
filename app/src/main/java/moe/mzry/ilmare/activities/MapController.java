@@ -26,7 +26,7 @@ import moe.mzry.ilmare.service.data.Message;
  * A wrapper which contains a google map fragment.
  */
 public class MapController implements OnMapReadyCallback, GoogleMap.OnMapClickListener,
-        GoogleMap.OnMapLoadedCallback, GoogleMap.OnMarkerClickListener, ServiceConnection {
+        GoogleMap.OnMapLoadedCallback, GoogleMap.OnMarkerClickListener {
 
     public static MapController INSTANCE = new MapController();
 
@@ -146,20 +146,5 @@ public class MapController implements OnMapReadyCallback, GoogleMap.OnMapClickLi
     public boolean onMarkerClick(Marker marker) {
         // TODO: display the message
         return false;
-    }
-
-    @Override
-    public void onServiceConnected(ComponentName name, IBinder service) {
-        MainApp.getDataProvider().addMessageListener(new Callback<List<Message>>() {
-            @Override
-            public void apply(List<Message> data) {
-                renderMessages(data);
-            }
-        });
-    }
-
-    @Override
-    public void onServiceDisconnected(ComponentName name) {
-
     }
 }

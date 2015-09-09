@@ -45,6 +45,7 @@ public class MessageListAdapter extends RecyclerView.Adapter<MessageListAdapter.
     }
 
     public void apply(List<Message> messages) {
+        messages = new ArrayList<>(messages);
         Collections.sort(messages, new MessageComparators.MessageCreationTimeComparator());
         messageList = messages.subList(0, Math.min(messages.size(), MAX_ITEM));
         this.notifyDataSetChanged();

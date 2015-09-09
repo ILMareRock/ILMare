@@ -24,7 +24,7 @@ import moe.mzry.ilmare.service.data.eddystone.Beacon;
 /**
  * Message list fragment.
  */
-public class MessageListFragment extends Fragment implements ServiceConnection {
+public class MessageListFragment extends Fragment {
 
     private static final MessageListAdapter messageListAdapter = new MessageListAdapter();
     private static final BeaconListAdapter beaconListAdapter = new BeaconListAdapter();
@@ -60,24 +60,11 @@ public class MessageListFragment extends Fragment implements ServiceConnection {
         return view;
     }
 
-    @Override
-    public void onServiceConnected(ComponentName name, IBinder service) {
-        MainApp.getDataProvider().addMessageListener(new Callback<List<Message>>() {
-            @Override
-            public void apply(List<Message> data) {
-                messageListAdapter.apply(data);
-            }
-        });
-        MainApp.getLocationProvider().addBeaconListener(new Callback<List<Beacon>>() {
-            @Override
-            public void apply(List<Beacon> data) {
-                beaconListAdapter.apply(data);
-            }
-        });
+    public void renderMessage(List<Message> data) {
+        messageListAdapter.apply(data);
     }
 
-    @Override
-    public void onServiceDisconnected(ComponentName name) {
-
+    public void renderBeacon(List<Beacon> data) {
+        beaconListAdapter.apply(data);
     }
 }
