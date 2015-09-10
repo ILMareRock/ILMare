@@ -43,11 +43,9 @@ import java.util.List;
 
 import moe.mzry.ilmare.MainApp;
 import moe.mzry.ilmare.R;
-import moe.mzry.ilmare.opengl.Billboard;
 import moe.mzry.ilmare.opengl.GLRenderer;
 import moe.mzry.ilmare.service.DataModel;
 import moe.mzry.ilmare.service.IlMareService;
-import moe.mzry.ilmare.service.data.BillboardMessage;
 import moe.mzry.ilmare.service.data.FirebaseLatLng;
 import moe.mzry.ilmare.service.data.LocationSpec;
 import moe.mzry.ilmare.service.data.Message;
@@ -256,42 +254,10 @@ public class VrActivityFragment extends Fragment implements SensorEventListener 
     if (messages == null) {
       return;
     }
-    IlMareService service = ((MainApp) this.getActivity().getApplicationContext()).getIlMareService();
-    if (service != null) {
-      float minX = 1e9f;
-      float minY = 1e9f;
-      float maxX = -1e9f;
-      float maxY = -1e9f;
-      LocationSpec spec = service.getLocationSpec();
-      FirebaseLatLng location = spec.getLocation();
-      List<BillboardMessage> billboards = new ArrayList<>();
-      for (Message message : messages) {
-        Pair<Double, Double> xy = message.getLocationSpec().getLocation().relativeDistance(location);
-        if (Math.abs(xy.first) > 5000 || Math.abs(xy.second) > 5000) {
-          continue;
-        }
-        if (minX > xy.first) {
-          minX = xy.first.floatValue();
-        }
-        if (minY > xy.second) {
-          minY = xy.second.floatValue();
-        }
-        if (maxX < xy.first) {
-          maxX = xy.first.floatValue();
-        }
-        if (maxY < xy.second) {
-          maxY = xy.second.floatValue();
-        }
-        billboards.add(new BillboardMessage(message.getId(), message.getContent(), xy.first.floatValue(),
-            xy.second.floatValue()));
-      }
-      float ratioX = 20 * 1000 / Math.max(Math.abs(minX), Math.abs(maxX));
-      float ratioY = 20 * 1000/ Math.max(Math.abs(minY), Math.abs(maxY));
-      for (BillboardMessage b : billboards) {
-        b.setX(b.getX() * ratioX);
-        b.setY(b.getY() * ratioY);
-      }
-      renderer.setBillboards(new HashSet<>(billboards));
+    FirebaseLatLng loc = DataModel.INSTANCE.getCurrentLocation();
+    if (loc != null) {
+      renderer.setBillboards(new HashSet<>(DataModel.INSTANCE.getNearbyMessages(loc)));
+      renderer.setOrigin(loc);
     }
   }
 

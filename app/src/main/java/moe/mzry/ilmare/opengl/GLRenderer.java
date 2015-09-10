@@ -4,6 +4,7 @@ import android.opengl.GLES20;
 import android.opengl.GLSurfaceView;
 import android.opengl.Matrix;
 import android.util.Log;
+import android.util.Pair;
 import android.util.SizeF;
 
 import java.util.Arrays;
@@ -16,7 +17,9 @@ import java.util.Set;
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
+import moe.mzry.ilmare.service.DataModel;
 import moe.mzry.ilmare.service.data.BillboardMessage;
+import moe.mzry.ilmare.service.data.FirebaseLatLng;
 
 /**
  * Created by yfchen on 9/3/15.
@@ -57,6 +60,7 @@ public class GLRenderer implements GLSurfaceView.Renderer {
   };
   private boolean ready = false;
   private int mProgram;
+  private FirebaseLatLng mOrigin = null;
 
   String[] messages = {
       "Let me say something",
@@ -144,6 +148,10 @@ public class GLRenderer implements GLSurfaceView.Renderer {
     this.mRotationMat = rotationMat;
   }
 
+  public void setOrigin(FirebaseLatLng location) {
+    this.mOrigin = location;
+  }
+
   public void setReady(boolean ready) {
     this.ready = ready;
   }
@@ -197,8 +205,14 @@ public class GLRenderer implements GLSurfaceView.Renderer {
     Matrix.multiplyMM(mMVPMatrix, 0, mProjectionMatrix, 0, mRotationMat, 0);
 
     // Draw shape
+    Pair<Double, Double> camera;
+    if (mOrigin == null) {
+      camera = Pair.create(0d, 0d);
+    } else {
+      camera = mOrigin.relativeDistance(DataModel.INSTANCE.getCurrentLocation());
+    }
     for (Billboard b : billboardMessages.values()) {
-      b.setCamera(0, 0);
+      b.setCamera(camera.first.floatValue(), camera.second.floatValue());
     }
 
     Billboard[] mBillboard = billboardMessages.values().toArray(new Billboard[0]);
