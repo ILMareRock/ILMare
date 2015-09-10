@@ -38,6 +38,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
 
 import moe.mzry.ilmare.MainApp;
@@ -263,7 +264,6 @@ public class VrActivityFragment extends Fragment implements SensorEventListener 
       float maxY = -1e9f;
       LocationSpec spec = service.getLocationSpec();
       FirebaseLatLng location = spec.getLocation();
-      Log.e("yfchen", "We are at: " + location.toString());
       List<BillboardMessage> billboards = new ArrayList<>();
       for (Message message : messages) {
         Pair<Double, Double> xy = message.getLocationSpec().getLocation().relativeDistance(location);
@@ -282,7 +282,7 @@ public class VrActivityFragment extends Fragment implements SensorEventListener 
         if (maxY < xy.second) {
           maxY = xy.second.floatValue();
         }
-        billboards.add(new BillboardMessage(message.getContent(), xy.first.floatValue(),
+        billboards.add(new BillboardMessage(message.getId(), message.getContent(), xy.first.floatValue(),
             xy.second.floatValue()));
       }
       float ratioX = 20 * 1000 / Math.max(Math.abs(minX), Math.abs(maxX));
@@ -291,7 +291,7 @@ public class VrActivityFragment extends Fragment implements SensorEventListener 
         b.setX(b.getX() * ratioX);
         b.setY(b.getY() * ratioY);
       }
-      renderer.setBillboards(billboards);
+      renderer.setBillboards(new HashSet<>(billboards));
     }
   }
 

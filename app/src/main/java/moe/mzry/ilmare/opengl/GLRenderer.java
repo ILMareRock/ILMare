@@ -7,7 +7,11 @@ import android.util.Log;
 import android.util.SizeF;
 
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
@@ -35,8 +39,8 @@ public class GLRenderer implements GLSurfaceView.Renderer {
           "void main() {" +
           "  gl_FragColor = texture2D(u_samplerTexture, v_texCoord);" +
           "}";
-  private Billboard[] mBillboard;
-  private List<BillboardMessage> billboardMessages;
+  private HashMap<BillboardMessage, Billboard> billboardMessages = new HashMap<>();
+  private Set<BillboardMessage> messagesToAdd = new HashSet<>();
   private final float[] mMVPMatrix = new float[16];
   private final float[] mProjectionMatrix = new float[16];
   private float mFocalLength = 4f;
@@ -87,22 +91,7 @@ public class GLRenderer implements GLSurfaceView.Renderer {
 
     mProgram = initShader();
 
-    if (billboardMessages == null) {
-      mBillboard = null;
-    } else {
-      createBillboards();
-    }
-
-//    mBillboard = new Billboard[20];
-//    for (int i = 0; i < 20; i++) {
-//      float x = (float) Math.random() * 20000 - 10000;
-//      float y = (float) Math.random() * 20000 - 10000;
-//      String txt = String.format("Id = (%d).", i);
-//      txt += " " + messages[i];
-//
-//      mBillboard[i] = new Billboard(txt,
-//          x, y);
-//    }
+    createBillboards();
   }
 
   int initShader() {
@@ -159,26 +148,43 @@ public class GLRenderer implements GLSurfaceView.Renderer {
     this.ready = ready;
   }
 
-  public void setBillboards(List<BillboardMessage> billboards) {
-    this.billboardMessages = billboards;
-    if (mProgram != 0) {
-      createBillboards();
+  public synchronized void setBillboards(Set<BillboardMessage> billboards) {
+    Set<BillboardMessage> messagesToDelete = new HashSet<>();
+
+    for (BillboardMessage b : billboardMessages.keySet()) {
+      if (!billboards.contains(b)) {
+        messagesToDelete.add(b);
+      }
+    }
+    synchronized (messagesToAdd) {
+      for (BillboardMessage b : billboards) {
+        if (!billboardMessages.containsKey(b)) {
+          messagesToAdd.add(b);
+        }
+      }
+    }
+    for (BillboardMessage b : messagesToDelete) {
+      billboards.remove(b);
     }
   }
 
   private void createBillboards() {
-    mBillboard = new Billboard[billboardMessages.size()];
-    for (int i = 0; i < billboardMessages.size(); i ++) {
-      BillboardMessage b = billboardMessages.get(i);
-      mBillboard[i] = new Billboard(b.getContent(), b.getX(), b.getY());
+    synchronized (messagesToAdd) {
+      if (! messagesToAdd.isEmpty()) {
+        for (BillboardMessage b : messagesToAdd) {
+          billboardMessages.put(b, new Billboard(b.getContent(), b.getX(), b.getY()));
+        }
+        messagesToAdd.clear();
+      }
     }
   }
 
   public void onDrawFrame(GL10 unused) {
     // Redraw background color
     GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT | GLES20.GL_DEPTH_BUFFER_BIT);
+    createBillboards();
 
-    if (!ready || mBillboard == null) {
+    if (!ready || billboardMessages.isEmpty()) {
       return;
     }
     GLES20.glViewport(mCanvasWidth - mViewWidth, mCanvasHeight - mViewHeight, mViewWidth, mViewHeight);
@@ -191,9 +197,11 @@ public class GLRenderer implements GLSurfaceView.Renderer {
     Matrix.multiplyMM(mMVPMatrix, 0, mProjectionMatrix, 0, mRotationMat, 0);
 
     // Draw shape
-    for (int i = 0; i < mBillboard.length; i++) {
-      mBillboard[i].setCamera(0, 0);
+    for (Billboard b : billboardMessages.values()) {
+      b.setCamera(0, 0);
     }
+
+    Billboard[] mBillboard = billboardMessages.values().toArray(new Billboard[0]);
 
     Arrays.sort(mBillboard);
     GLES20.glDepthMask(false);
