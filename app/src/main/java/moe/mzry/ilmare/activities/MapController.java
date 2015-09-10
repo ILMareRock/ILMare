@@ -110,6 +110,14 @@ public class MapController implements OnMapReadyCallback, GoogleMap.OnMapClickLi
         map.setOnMarkerClickListener(INSTANCE);
         map.setOnMarkerDragListener(INSTANCE);
         renderMessages(messageList);
+
+        FirebaseLatLng latLng = MainApp.getLocationProvider().getLocation();
+        map.moveCamera(CameraUpdateFactory.newLatLngZoom(
+                new LatLng(latLng.getLatitude(), latLng.getLongitude()), 18f));
+        final Marker currentLocationMarker = map.addMarker(new MarkerOptions()
+                .icon(BitmapDescriptorFactory.fromResource(R.drawable.beacon_icon))
+                .anchor(0.0f, 1.0f) // Anchors the marker on the bottom left
+                .position(new LatLng(latLng.getLatitude(), latLng.getLongitude())));
         final Handler handler = new Handler();
         Runnable updateCurrentLocation = new Runnable() {
             @Override
@@ -118,10 +126,9 @@ public class MapController implements OnMapReadyCallback, GoogleMap.OnMapClickLi
                     return;
                 }
                 FirebaseLatLng latLng = MainApp.getLocationProvider().getLocation();
-                map.moveCamera(CameraUpdateFactory.newLatLngZoom(
-                        new LatLng(latLng.getLatitude(), latLng.getLongitude()), 18f));
-
-                //handler.postDelayed(this, 500);
+                currentLocationMarker.setPosition(
+                        new LatLng(latLng.getLatitude(), latLng.getLongitude()));
+                handler.postDelayed(this, 500);
             }
         };
         handler.postDelayed(updateCurrentLocation, 0);
