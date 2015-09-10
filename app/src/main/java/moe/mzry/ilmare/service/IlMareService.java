@@ -194,7 +194,10 @@ public class IlMareService extends Service implements IlMareLocationProvider, Il
             bestLocation = locationNet;
         }
 
-        return new FirebaseLatLng(bestLocation.getLatitude(), bestLocation.getLongitude());
+        FirebaseLatLng location = new FirebaseLatLng(bestLocation.getLatitude(),
+                bestLocation.getLongitude());
+        GpsUtil.transform(location);
+        return location;
     }
 
     @Override
