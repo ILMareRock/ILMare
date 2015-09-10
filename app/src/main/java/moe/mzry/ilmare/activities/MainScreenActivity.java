@@ -208,6 +208,7 @@ public class MainScreenActivity extends AppCompatActivity implements PopupTextBo
         if (supportMapFragment == null) {
             supportMapFragment = SupportMapFragment.newInstance();
             MapController.bindController(supportMapFragment);
+            MapController.INSTANCE.setContext(this.getApplicationContext());
         }
         return supportMapFragment;
     }
