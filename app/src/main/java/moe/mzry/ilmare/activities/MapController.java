@@ -1,6 +1,7 @@
 package moe.mzry.ilmare.activities;
 
 import android.content.ComponentName;
+import android.content.Context;
 import android.content.ServiceConnection;
 import android.os.IBinder;
 import android.util.Log;
@@ -13,6 +14,7 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.maps.android.ui.IconGenerator;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,6 +36,7 @@ public class MapController implements OnMapReadyCallback, GoogleMap.OnMapClickLi
 
     private List<Message> messageList = new ArrayList<>();
     private GoogleMap map;
+    private Context context;
     private MapController() {}
 
     public static void bindController(SupportMapFragment supportMapFragment) {
@@ -63,6 +66,10 @@ public class MapController implements OnMapReadyCallback, GoogleMap.OnMapClickLi
         }
     }
 
+    public void setContext(Context context) {
+        this.context = context;
+    }
+
     public void renderMessages(List<Message> messages) {
         messageList = messages;
         // MainApp.getLocationProvider().getLocationSpec();
@@ -72,12 +79,15 @@ public class MapController implements OnMapReadyCallback, GoogleMap.OnMapClickLi
             //Log.i("loc", ">> latitude:" + msg.getLocationSpec().getLocation().getLatitude());
             //Log.i("loc", ">> longtitude:" + msg.getLocationSpec().getLocation().getLongitude());
             //map.moveCamera(CameraUpdateFactory.newLatLngZoom(curLoc, 13));
-            map.addMarker(new MarkerOptions()
+            /*map.addMarker(new MarkerOptions()
                     .icon(BitmapDescriptorFactory.fromResource(R.drawable.message_icon))
                     .anchor(0.0f, 1.0f) // Anchors the marker on the bottom left
                     .title(msg.getContent())
                     .snippet("Content:" + msg.getContent() + " Time:" + msg.getCreationTime())
-                    .position(curLoc));
+                    .position(curLoc));*/
+            IconGenerator iconFactory = new IconGenerator(context);
+            addIcon(iconFactory, msg.getContent(), curLoc);
+
         }
         /*map.moveCamera(CameraUpdateFactory.newLatLngZoom(
                 new LatLng(
@@ -91,6 +101,15 @@ public class MapController implements OnMapReadyCallback, GoogleMap.OnMapClickLi
                 .build();
         map.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition),
                 2000, null);*/
+    }
+
+    private void addIcon(IconGenerator iconFactory, String text, LatLng position) {
+        MarkerOptions markerOptions = new MarkerOptions().
+                icon(BitmapDescriptorFactory.fromBitmap(iconFactory.makeIcon(text))).
+                position(position).
+                anchor(iconFactory.getAnchorU(), iconFactory.getAnchorV());
+
+        map.addMarker(markerOptions);
     }
 
     @Override
