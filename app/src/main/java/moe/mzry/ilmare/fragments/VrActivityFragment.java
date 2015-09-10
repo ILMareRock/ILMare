@@ -289,7 +289,7 @@ public class VrActivityFragment extends Fragment implements SensorEventListener 
       float ratioY = 20 * 1000/ Math.max(Math.abs(minY), Math.abs(maxY));
       for (BillboardMessage b : billboards) {
         b.setX(b.getX() * ratioX);
-        b.setX(b.getY() * ratioY);
+        b.setY(b.getY() * ratioY);
       }
       renderer.setBillboards(billboards);
     }
