@@ -11,6 +11,8 @@ import android.bluetooth.le.ScanResult;
 import android.bluetooth.le.ScanSettings;
 import android.content.Context;
 import android.content.Intent;
+import android.location.Location;
+import android.location.LocationManager;
 import android.os.Binder;
 import android.os.IBinder;
 import android.os.ParcelUuid;
@@ -53,6 +55,7 @@ public class IlMareService extends Service implements IlMareLocationProvider, Il
     private BluetoothLeScanner scanner;
     private Map<String, Beacon> beaconMap = new HashMap<>();
 
+    private LocationManager locationManager;
     private ScanCallback scanCallback;
     private static final ScanSettings SCAN_SETTINGS =
             new ScanSettings.Builder().setScanMode(ScanSettings.SCAN_MODE_LOW_LATENCY)
@@ -82,6 +85,10 @@ public class IlMareService extends Service implements IlMareLocationProvider, Il
         }
     }
 
+    private void initLocation() {
+        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+    }
+
     private void initFirebase() {
         firebaseRef = new Firebase(FIREBASE_URL);
         firebaseMessagesRef = firebaseRef.child(FIREBASE_MESSAGES_SPEC);
@@ -93,6 +100,7 @@ public class IlMareService extends Service implements IlMareLocationProvider, Il
         super.onCreate();
         // create bluetooth scanner.
         initScanner();
+        initLocation();
         initFirebase();
         Log.i("IlMareService", "onCreate");
     }
@@ -165,7 +173,28 @@ public class IlMareService extends Service implements IlMareLocationProvider, Il
     // The following methods should be the real service
     @Override
     public FirebaseLatLng getLocation() {
-        return new FirebaseLatLng(-34, 151);
+        Location locationGPS = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+        Location locationNet =
+                locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+
+        long GPSLocationTime = 0;
+        if (null != locationGPS) { GPSLocationTime = locationGPS.getTime(); }
+
+        long NetLocationTime = 0;
+
+        if (null != locationNet) {
+            NetLocationTime = locationNet.getTime();
+        }
+
+        Location bestLocation;
+        if ( 0 < GPSLocationTime - NetLocationTime ) {
+            bestLocation = locationGPS;
+        }
+        else {
+            bestLocation = locationNet;
+        }
+
+        return new FirebaseLatLng(bestLocation.getLatitude(), bestLocation.getLongitude());
     }
 
     @Override

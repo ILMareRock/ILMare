@@ -193,6 +193,7 @@ public class MainScreenActivity extends AppCompatActivity implements PopupTextBo
 
     @Override
     public void onBeaconChanged(List<Beacon> beaconList) {
+        MapController.INSTANCE.renderBeacons(beaconList);
         if (messageListFragment != null) {
             messageListFragment.renderBeacon(beaconList);
         }

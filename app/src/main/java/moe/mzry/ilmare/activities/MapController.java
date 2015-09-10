@@ -20,7 +20,9 @@ import java.util.List;
 import moe.mzry.ilmare.MainApp;
 import moe.mzry.ilmare.R;
 import moe.mzry.ilmare.service.Callback;
+import moe.mzry.ilmare.service.data.LocationSpec;
 import moe.mzry.ilmare.service.data.Message;
+import moe.mzry.ilmare.service.data.eddystone.Beacon;
 
 /**
  * A wrapper which contains a google map fragment.
@@ -45,16 +47,31 @@ public class MapController implements OnMapReadyCallback, GoogleMap.OnMapClickLi
         }
     }
 
+    public void renderBeacons(List<Beacon> beacons) {
+        for (Beacon beacon : beacons) {
+            MainApp.getLocationProvider().getBeaconLocation(beacon, new Callback<LocationSpec>() {
+                @Override
+                public void apply(LocationSpec data) {
+                    LatLng curLoc = new LatLng(data.getLocation().getLatitude(),
+                            data.getLocation().getLongitude());
+                    //map.moveCamera(CameraUpdateFactory.newLatLngZoom(curLoc, 13));
+                    map.addMarker(new MarkerOptions()
+                            .icon(BitmapDescriptorFactory.fromResource(R.drawable.beacon_icon))
+                            .position(curLoc));
+                }
+            });
+        }
+    }
+
     public void renderMessages(List<Message> messages) {
         messageList = messages;
         // MainApp.getLocationProvider().getLocationSpec();
         for (Message msg : messageList) {
             LatLng curLoc = new LatLng(msg.getLocationSpec().getLocation().getLatitude(),
                     msg.getLocationSpec().getLocation().getLongitude());
-            Log.i("loc", ">> latitude:" + msg.getLocationSpec().getLocation().getLatitude());
-            Log.i("loc", ">> longtitude:" + msg.getLocationSpec().getLocation().getLongitude());
-            map.setMyLocationEnabled(true);
-            map.moveCamera(CameraUpdateFactory.newLatLngZoom(curLoc, 13));
+            //Log.i("loc", ">> latitude:" + msg.getLocationSpec().getLocation().getLatitude());
+            //Log.i("loc", ">> longtitude:" + msg.getLocationSpec().getLocation().getLongitude());
+            //map.moveCamera(CameraUpdateFactory.newLatLngZoom(curLoc, 13));
             map.addMarker(new MarkerOptions()
                     .icon(BitmapDescriptorFactory.fromResource(R.drawable.message_icon))
                     .anchor(0.0f, 1.0f) // Anchors the marker on the bottom left
@@ -81,6 +98,7 @@ public class MapController implements OnMapReadyCallback, GoogleMap.OnMapClickLi
         Log.i("GoogleMap", "onMapReady!");
         this.map = map;
         renderMessages(messageList);
+        map.setMyLocationEnabled(true);
 /*        // Add a marker in Sydney, Australia, and move the camera.
         LatLng sydney = new LatLng(-34, 151);
         map.setMyLocationEnabled(true);
