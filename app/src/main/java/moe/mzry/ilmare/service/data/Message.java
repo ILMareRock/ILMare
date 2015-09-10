@@ -7,6 +7,7 @@ import java.util.Date;
  */
 public class Message {
 
+    private String id;
     private String content;
     private LocationSpec locationSpec;
     private Date creationTime;
@@ -39,5 +40,13 @@ public class Message {
 
     public void setCreationTime(Date creationTime) {
         this.creationTime = creationTime;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 }

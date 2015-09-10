@@ -255,7 +255,9 @@ public class IlMareService extends Service implements IlMareLocationProvider, Il
             public void onDataChange(DataSnapshot snapshot) {
                 List<Message> messages = new ArrayList<>();
                 for (DataSnapshot messageSnapshot: snapshot.getChildren()) {
-                    messages.add(messageSnapshot.getValue(Message.class));
+                    Message message = messageSnapshot.getValue(Message.class);
+                    message.setId(messageSnapshot.getKey());
+                    messages.add(message);
                 }
                 callback.apply(messages);
             }
@@ -278,5 +280,11 @@ public class IlMareService extends Service implements IlMareLocationProvider, Il
         message.setLocationSpec(locationSpec);
         message.setCreationTime(new Date());
         newMessageRef.setValue(message);
+    }
+
+    @Override
+    public void updateMessage(Message message, LocationSpec locationSpec) {
+        Firebase locationRef = firebaseMessagesRef.child(message.getId()).child("locationSpec");
+        locationRef.setValue(locationSpec);
     }
 }

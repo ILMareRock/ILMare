@@ -15,4 +15,6 @@ public interface IlMareDataProvider {
     List<Message> getMessageByBeacon(LocationSpec locationSpec);
 
     void createMessage(Message message, LocationSpec locationSpec);
+
+    void updateMessage(Message message, LocationSpec locationSpec);
 }
