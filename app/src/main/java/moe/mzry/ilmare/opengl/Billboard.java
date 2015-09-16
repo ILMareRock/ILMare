@@ -54,6 +54,7 @@ public class Billboard implements Comparable<Billboard> {
   private float mY;
   private float mCx;
   private float mCy;
+  private float mZ;
   private float width = 1000; // real width / 2
   private static int textWidth = 1024;
   private int textHeight;
@@ -62,6 +63,7 @@ public class Billboard implements Comparable<Billboard> {
   public Billboard(String message, float x, float y) {
     mX = x;
     mY = y;
+    mZ = ((int) (Math.random() * 5) - 2) * 1000;
     initShape();
     setText(message);
   }
@@ -117,16 +119,16 @@ public class Billboard implements Comparable<Billboard> {
     float height = (float) textHeight / textWidth * width;
     squareCoords[0] = mX + dx * width;
     squareCoords[1] = mY + dy * width;
-    squareCoords[2] = 500+height;
+    squareCoords[2] = mZ + height;
     squareCoords[3] = mX + dx * width;
     squareCoords[4] = mY + dy * width;
-    squareCoords[5] = 500;
+    squareCoords[5] = mZ;
     squareCoords[6] = mX - dx * width;
     squareCoords[7] = mY - dy * width;
-    squareCoords[8] = 500;
+    squareCoords[8] = mZ;
     squareCoords[9] = mX - dx * width;
     squareCoords[10] = mY - dy * width;
-    squareCoords[11] = 500+height;
+    squareCoords[11] = mZ + height;
 
     vertexBuffer.put(squareCoords);
     vertexBuffer.position(0);
@@ -140,6 +142,7 @@ public class Billboard implements Comparable<Billboard> {
     StaticLayout layout = new StaticLayout(text, mTextPaint, textWidth - corner * 2,
         Layout.Alignment.ALIGN_NORMAL, 1, 0, false);
     textHeight = layout.getHeight() + corner * 2;
+    textWidth = layout.getWidth() + corner * 2;
     Bitmap bitmap = Bitmap.createBitmap(textWidth, textHeight, Bitmap.Config.ARGB_4444);
     Canvas canvas = new Canvas(bitmap);
 
